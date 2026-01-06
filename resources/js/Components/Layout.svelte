@@ -1,7 +1,7 @@
 <script>
     import { inertia } from "@inertiajs/svelte";
 
-    let { children } = $props();
+    let { children, ...otherProps } = $props();
 </script>
 
 <svelte:head>
@@ -11,14 +11,19 @@
 </svelte:head>
 
 <div class="header flex justify-content-center align-items-center">
-    <a use:inertia href="/">
+    {#if otherProps.gameInfo?.image}
+        <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
+    {/if}
+    <a use:inertia href="/" style="order: 2;">
         <h1>
             Matt's Game Guides
         </h1>
     </a>
 </div>
 
-{@render children()}
+<div style="margin: 2em;">
+    {@render children()}
+</div>
 
 <hr>
 <div class="footer flex justify-content-center">
@@ -37,13 +42,23 @@
         height: 75px;
         z-index: 9999;
         background-color: white;
+        gap: 20px;
 
         @media screen and (max-width: 800px){
             height: 50px;
         }
-
+        
         a {
             padding: 5px 10px;
+        }
+        
+        .game-logo {
+            max-width: 100px;
+            max-height: 75px;
+
+            @media screen and (max-width: 800px){
+                height: 50px;
+            }
         }
     }
 

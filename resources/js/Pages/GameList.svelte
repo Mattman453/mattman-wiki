@@ -1,7 +1,8 @@
 <script>
     import { inertia } from "@inertiajs/svelte";
+    import Layout from "../Components/Layout.svelte";
 
-    let {games} = $props();
+    let { games } = $props();
 
     function generateRandomHex(length) {
         let hex = "";
@@ -13,18 +14,20 @@
     }
 </script>
 
-<h1 style="text-align: center;">Welcome to the Home of Matt</h1>
-<div class="flex game-container">
-    {#each games as game (game.title)}
-        <a use:inertia href="{game.link ?? ""}"class="game flex column">
-            <div class="game-image">
-                <!-- Final Image -->
-                <img src="{game.image ?? "https://placehold.co/128x128/"+generateRandomHex(6)+"/cccccc.png?font=lato"}" alt="{game.title ?? "game"} logo">
-            </div>
-            <div class="game-title">{game.title}</div>
-        </a>
-    {/each}
-</div>
+<Layout>
+    <h1 style="text-align: center;">Welcome to the Home of Matt</h1>
+    <div class="flex game-container">
+        {#each games as game (game.title)}
+            <a use:inertia href="/game/{game.link ?? ""}" class="game flex column">
+                <div class="game-image">
+                    <!-- Final Image -->
+                    <img src="{game.image ?? "https://placehold.co/128x128/"+generateRandomHex(6)+"/cccccc.png?font=lato"}" alt="{game.title ?? "game"} logo">
+                </div>
+                <div class="game-title">{game.title}</div>
+            </a>
+        {/each}
+    </div>
+</Layout>
 
 <style lang="scss">
     .game-container {
