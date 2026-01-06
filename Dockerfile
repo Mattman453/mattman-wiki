@@ -4,16 +4,15 @@ ARG user
 ARG uid
 
 RUN apt-get update && apt-get install -y \
-    sudo \
-    git \
     curl \
+    git \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    zlib1g-dev \
-    zip \
+    npm \
+    sudo \
     unzip \
-    npm
+    zip 
 
 RUN npm install --global yarn
 
