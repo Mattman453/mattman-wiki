@@ -16,6 +16,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN npm install --global yarn
 
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+
+RUN pie install mongodb/mongodb-extension
+
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install mbstring exif pcntl bcmath gd

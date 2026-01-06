@@ -9,8 +9,8 @@ use Inertia\Inertia;
 class MainController extends Controller
 {
     public function homeView(Request $request) {
-        $games = Game::all();
-        return Inertia::render('Home', [
+        $games = Game::select(['title', 'image', 'link'])->get();
+        return Inertia::render('GameList', [
             'games' => $games,
         ]);
     }
