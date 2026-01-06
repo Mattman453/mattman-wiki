@@ -14,4 +14,8 @@ class MainController extends Controller
             'games' => $games,
         ]);
     }
+
+    public function aboutView(Request $request) {
+        return Inertia::render('About');
+    }
 }

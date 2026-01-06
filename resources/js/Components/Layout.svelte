@@ -34,9 +34,19 @@
         top: 0;
         box-shadow: 0 4px 60px rgba(0, 0, 0, 0.2);
         height: 75px;
+        z-index: 9999;
+        background-color: white;
+
+        @media screen and (max-width: 800px){
+            height: 50px;
+        }
 
         a {
             padding: 5px 10px;
         }
+    }
+
+    .footer {
+        margin: 1em;
     }
 </style>
