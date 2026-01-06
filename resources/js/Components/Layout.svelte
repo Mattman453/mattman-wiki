@@ -5,6 +5,7 @@
 </script>
 
 <svelte:head>
+    <link rel="icon" href="/userIcon.ico">
     <title>Matt's Home</title>
     <script src="https://kit.fontawesome.com/0cdd07cc84.js" crossorigin="anonymous"></script>
 </svelte:head>
