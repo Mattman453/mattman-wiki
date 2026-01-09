@@ -70,6 +70,8 @@
         background-color: rgba(0, 0, 0, 0.05);
         width: 100%;
         text-align: center;
+        text-decoration: none;
+        color: black;
     }
     
     .heading-link {

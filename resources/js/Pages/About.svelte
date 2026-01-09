@@ -72,11 +72,6 @@
 
             .body {
                 font-size: 16px;
-
-                a {
-                    text-decoration: underline;
-                    color: blue;
-                }
             }
         }
 

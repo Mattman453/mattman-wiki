@@ -30,6 +30,11 @@
 </Layout>
 
 <style lang="scss">
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
     .game-container {
         flex-wrap: wrap;
         margin: 2em;

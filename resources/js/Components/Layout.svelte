@@ -35,6 +35,11 @@
 </div>
 
 <style lang="scss">
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
     .header {
         position: sticky;
         top: 0;

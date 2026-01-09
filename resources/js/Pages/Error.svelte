@@ -17,8 +17,5 @@
 </Layout>
 
 <style lang="scss">
-    a {
-        text-decoration: underline;
-        color: blue;
-    }
+
 </style>
