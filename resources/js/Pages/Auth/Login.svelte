@@ -4,7 +4,7 @@
 </script>
 
 <Layout>
-    
+    <div>Login</div>
 </Layout>
 
 <style lang="scss">

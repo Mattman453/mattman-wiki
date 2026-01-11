@@ -4,7 +4,7 @@
 </script>
 
 <Layout>
-
+    <div>Verify</div>
 </Layout>
 
 <style lang="scss">

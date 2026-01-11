@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use MongoDB\Driver\Exception\BulkWriteException;
@@ -62,6 +64,7 @@ class AuthController extends Controller
             Auth::login($user);
             event(new Registered($user));
             Auth::user()->email_verification_sent_at = Carbon::now()->valueOf();
+            Auth::user()->sendEmailVerificationNotification();
             Auth::user()->save();
 
             return response()->json([
@@ -83,14 +86,28 @@ class AuthController extends Controller
         }
     }
 
-    public function verifyEmail(Request $request) {
+    public function verifyEmail(EmailVerificationRequest $request) {
         try {
+            $request->fulfill();
+            unset(Auth::user()->email_verification_sent_at);
+            Auth::user()->save();
+        } catch (\Exception $exception) {
+            Log::error($exception);
+        }
+        return redirect(route('game.home'));
+    }
+
+    public function sendEmailVerification(Request $request) {
+        try {
+            Log::debug("Verifying email...");
             if (Auth::user()->hasVerifiedEmail()) {
+                Log::debug("Already verified.");
                 return response()->json([
                     'success' => 'Email already verified, redirecting...',
-                    'redirect' => route('gmae.home'),
+                    'redirect' => route('game.home'),
                 ]);
             }
+            Log::debug("Sending Email...");
             return ($this->sendVerificationNotice($request->user())) ?
                 response()->json([
                     'success' => 'New verification link sent!',
@@ -108,6 +125,7 @@ class AuthController extends Controller
     }
 
     private function sendVerificationNotice(Authenticatable $user) {
+        Log::debug("Checking whether to send.");
         $nextAvailableVerification = ($user->email_verification_sent_at != null) ?
             Carbon::createFromTimestampMs($user->email_verification_sent_at)->addSeconds(config('auth.email_verification.throttle')) :
             Carbon::now();
