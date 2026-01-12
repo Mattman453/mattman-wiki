@@ -58,6 +58,10 @@
     .text-block {
         margin: 2em;
 
+        @media screen and (max-width: 800px) {
+            flex-direction: column;
+        }
+
         .text {
             max-width: 600px;
             margin: 0 1em;
