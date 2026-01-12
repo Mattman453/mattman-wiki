@@ -1,9 +1,10 @@
 <script>
     import Layout from "../../Components/Layout.svelte";
 
+    let { ...otherProps } = $props();
 </script>
 
-<Layout>
+<Layout {...otherProps}>
     <div>Verify</div>
 </Layout>
 

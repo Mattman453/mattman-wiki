@@ -2,7 +2,7 @@
     import { inertia } from "@inertiajs/svelte";
     import Layout from "../../Components/Layout.svelte";
 
-    let { csrfToken } = $props();
+    let { csrfToken, ...otherProps } = $props();
 
     let error = $state('');
 
@@ -41,9 +41,6 @@
                     case 400:
                         error = data.error;
                         break;
-                    case 419:
-                        console.log(data);
-                        break;
                     case 500:
                         error = data.error;
                         console.error(data);
@@ -65,7 +62,7 @@
     }
 </script>
 
-<Layout>
+<Layout {...otherProps}>
     <div class="flex column" style="gap: 0.3em; margin: 0 2em 1em;">
         <div class="title-2">
             Welcome to the registration page. You only need an account if you plan to edit or work on any pages.
@@ -94,18 +91,17 @@
                     Confirm your email:
                     <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirm Email" required>
                     <span>Email is not valid.</span>
-                    <span>Emails do not match.</span>
                 </label>
             </div>
             <div class="flex column" style="gap: 5px;">
                 <label class="flex column" for="password">
                     Enter your password:
-                    <input type="password" id="password" name="password" placeholder="Password" required>
-                    <span>Password is not valid.</span>
+                    <input type="password" id="password" name="password" placeholder="Password" minlength="8" maxlength="30" required>
+                    <span>Password is not valid. Password must be between 8 and 30 characters.</span>
                 </label>
                 <label class="flex column" for="passwordConfirm">
                     Confirm your password:
-                    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" required>
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" minlength="8" maxlength="30" required>
                     <span>Password is not valid.</span>
                 </label>
             </div>

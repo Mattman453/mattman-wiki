@@ -1,9 +1,10 @@
 <script>
     import Layout from "../Components/Layout.svelte";
 
+    let { ...otherProps } = $props();
 </script>
 
-<Layout>
+<Layout {...otherProps}>
     <div class="text-block flex justify-content-center align-items-center">
         <div class="text">
             <div class="opening">

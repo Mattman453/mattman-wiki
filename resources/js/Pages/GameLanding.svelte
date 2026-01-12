@@ -3,7 +3,7 @@
     import Layout from "../Components/Layout.svelte";
     import { inertia } from "@inertiajs/svelte";
 
-    let { gameInfo } = $props();
+    let { gameInfo, ...otherProps } = $props();
 
     let isDropdownOpen = $state([]);
 
@@ -14,13 +14,9 @@
             }
         }
     });
-
-    function handleDropdownClick(event) {
-        isDropdownOpen[event.target.id] = !isDropdownOpen[event.target.id];
-    }
 </script>
 
-<Layout {gameInfo}>
+<Layout {gameInfo} {...otherProps}>
     <div class="dropdown flex justify-content-center align-items-center">
         {#each gameInfo.headings as heading (heading.title)}
             <!-- svelte-ignore a11y_no_static_element_interactions -->

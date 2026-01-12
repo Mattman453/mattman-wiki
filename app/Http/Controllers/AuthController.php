@@ -25,7 +25,7 @@ class AuthController extends Controller
         } catch (ValidationException $exception) {
             return response()->json([
                 'error' => 'Email or Password is incorrect or missing. Please try again.',
-            ]);
+            ], 400);
         }
 
         $credentials['email'] = strtolower($credentials['email']);
@@ -36,7 +36,7 @@ class AuthController extends Controller
                     'url.intended',
                     Auth::user()->hasVerifiedEmail() ? route('game.home') : route('verification.notice')
                 ),
-            ]);
+            ], 302);
         }
 
         return response()->json([

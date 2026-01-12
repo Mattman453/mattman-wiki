@@ -11,7 +11,8 @@ Route::get('/health-token', function() {
 Route::get('/', 'App\Http\Controllers\MainController@homeView')->name('game.home');
 Route::get('/about', 'App\Http\Controllers\MainController@aboutView');
 Route::get('/login', 'App\Http\Controllers\AuthController@getLoginView')->name('auth.login');
-Route::get('/logout', 'App\Http\Controllers\AuthController@logout')->middleware('auth')->name('auth.logout');
+Route::post('/login', 'App\Http\Controllers\AuthController@login');
+Route::post('/logout', 'App\Http\Controllers\AuthController@logout');
 Route::get('/register', 'App\Http\Controllers\AuthController@getRegisterView');
 Route::post('/register', 'App\Http\Controllers\AuthController@register');
 Route::get('/verify/email/{id}/{hash}', 'App\Http\Controllers\AuthController@verifyEmail')->middleware('signed')->name('verification.verify');

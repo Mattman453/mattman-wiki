@@ -2,7 +2,7 @@
     import { inertia } from "@inertiajs/svelte";
     import Layout from "../Components/Layout.svelte";
 
-    let { games } = $props();
+    let { games, ...otherProps } = $props();
 
     function generateRandomHex(length) {
         let hex = "";
@@ -14,7 +14,7 @@
     }
 </script>
 
-<Layout>
+<Layout {...otherProps}>
     <h1 style="text-align: center;">Welcome to the Home of Matt</h1>
     <div class="flex game-container">
         {#each games as game (game.title)}
