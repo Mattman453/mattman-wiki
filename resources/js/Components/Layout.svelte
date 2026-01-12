@@ -1,11 +1,11 @@
 <script>
     import { inertia } from "@inertiajs/svelte";
+    import { isMobile } from "../stores";
 
     let { children, ...otherProps } = $props();
 </script>
 
 <svelte:head>
-    <link rel="icon" href="/favicon.ico">
     <title>Matt's Home</title>
     <script src="https://kit.fontawesome.com/0cdd07cc84.js" crossorigin="anonymous"></script>
 </svelte:head>
@@ -15,9 +15,9 @@
         <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
     {/if}
     <a use:inertia href="/" style="order: 2;">
-        <h1>
+        <div class="{$isMobile ? 'title-3' : 'title-1'}">
             Matt's Game Guides
-        </h1>
+        </div>
     </a>
 </div>
 
@@ -28,13 +28,15 @@
 <hr>
 <div class="footer flex justify-content-center">
     <a use:inertia href="/about">
-        <div class="title-2">
-            About Me
+        <div class="title-3">
+            About
         </div>
     </a>
 </div>
 
 <style lang="scss">
+    @use "../../css/variables";
+
     a {
         text-decoration: none;
         color: black;
@@ -44,12 +46,12 @@
         position: sticky;
         top: 0;
         box-shadow: 0 4px 60px rgba(0, 0, 0, 0.2);
-        height: 75px;
+        height: 60px;
         z-index: 9999;
         background-color: white;
         gap: 20px;
 
-        @media screen and (max-width: 800px){
+        @media screen and (max-width: variables.$mobileVW) {
             height: 50px;
         }
         
@@ -61,7 +63,7 @@
             max-width: 100px;
             max-height: 75px;
 
-            @media screen and (max-width: 800px){
+            @media screen and (max-width: variables.$mobileVW) {
                 height: 50px;
             }
         }

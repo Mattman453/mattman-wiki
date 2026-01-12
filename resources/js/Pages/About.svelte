@@ -55,10 +55,12 @@
 </Layout>
 
 <style lang="scss">
+    @use "../../css/variables";
+
     .text-block {
         margin: 2em;
 
-        @media screen and (max-width: 800px) {
+        @media screen and (max-width: variables.$mobileVW) {
             flex-direction: column;
         }
 
