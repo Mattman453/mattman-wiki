@@ -4,10 +4,11 @@
 
     let { verificationSentAt, throttle, csrfToken, ...otherProps } = $props();
 
-    let newestVerificationTime = $state(new Date(verificationSentAt));
+    let newestVerificationTime = $derived(new Date(verificationSentAt));
     let error = $state('');
     let message = $state('');
     let currentDate = $state(new Date());
+    let sending = $state(false);
 
     let dateInterval;
     let messageTimeout;
@@ -25,6 +26,7 @@
 
     function submitHandler(e) {
         e.preventDefault();
+        sending = true;
         fetch('/send-verification', {
             method: 'POST',
             headers: {
@@ -63,10 +65,16 @@
             .catch(exception => {
                 console.error(exception);
                 error = "Page has expired. Please reload the page and try again.";
+            })
+            .finally(() => {
+                sending = false;
             });
         })
         .catch(exception => {
             console.error(exception);
+        })
+        .finally(() => {
+            sending = false;
         });
     }
 </script>
@@ -78,11 +86,15 @@
         <div style:color="red">{error}</div>
         <div class="title-6">{message}</div>
         <form id="send-verification" onsubmit={submitHandler}>
-            <button type="submit" disabled={currentDate - newestVerificationTime < (throttle * 1000)}>
-                {throttle - ((currentDate - newestVerificationTime) / 1000) > 0 ? 
-                    parseInt(throttle - ((currentDate - newestVerificationTime) / 1000)) : 
-                    'Resend'
-                }
+            <button type="submit" disabled={currentDate - newestVerificationTime < (throttle * 1000) || sending}>
+                {#if sending}
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                {:else}
+                    {throttle - ((currentDate - newestVerificationTime) / 1000) > 0 ? 
+                        parseInt(throttle - ((currentDate - newestVerificationTime) / 1000)) :
+                        'Resend'
+                    }
+                {/if}
             </button>
         </form>
     </div>
