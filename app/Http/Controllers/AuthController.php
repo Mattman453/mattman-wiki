@@ -99,15 +99,13 @@ class AuthController extends Controller
 
     public function sendEmailVerification(Request $request) {
         try {
-            Log::debug("Verifying email...");
             if (Auth::user()->hasVerifiedEmail()) {
                 Log::debug("Already verified.");
                 return response()->json([
                     'success' => 'Email already verified, redirecting...',
                     'redirect' => route('game.home'),
-                ]);
+                ], 302);
             }
-            Log::debug("Sending Email...");
             return ($this->sendVerificationNotice($request->user())) ?
                 response()->json([
                     'success' => 'New verification link sent!',
@@ -163,6 +161,9 @@ class AuthController extends Controller
 
     public function getVerifyEmailView(Request $request) {
         if (Auth::user()->hasVerifiedEmail()) return redirect(route('game.home'));
-        return Inertia::render('Auth/Verify');
+        return Inertia::render('Auth/Verify', [
+            'verificationSentAt' => Auth::user()->email_verification_sent_at,
+            'throttle' => config('auth.email_verification.throttle', 120),
+        ]);
     }
 }
