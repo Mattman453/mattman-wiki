@@ -11,6 +11,7 @@
     {:else}
         <div>{title}</div>
     {/if}
+    <!-- svelte-ignore a11y_consider_explicit_label -->
     <button class="flex" style="justify-content: right; width: 100%;" onclick={() => visible = !visible}>
         <i class="fa-solid" class:fa-chevron-right={!visible} class:fa-chevron-down={visible}></i>
     </button>

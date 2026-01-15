@@ -36,31 +36,11 @@
 </Layout>
 
 <style lang="scss">
-    .dropdown {
-        overflow-x: auto;
-    }
-
     .title-1 {
         margin: 1em;
     }
 
     .title-6 {
         margin: 2em;
-    }
-
-    a {
-        padding: 0.3em;
-        border: 1px solid black;
-        border-top: 0;
-        background-color: rgba(0, 0, 0, 0.05);
-        width: 100%;
-        text-align: center;
-        text-decoration: none;
-        color: black;
-    }
-    
-    .heading-link {
-        border-top: 1px solid black;
-        border-radius: 15px 15px 0 0;
     }
 </style>

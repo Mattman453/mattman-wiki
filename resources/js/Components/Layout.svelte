@@ -101,6 +101,8 @@
                 {/each}
             </div>
         </div>
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div class="background" transition:slide={{axis: 'x'}} onclick={() => openNavigator = false}></div>
     {/if}
 </div>
@@ -128,26 +130,6 @@
     a {
         text-decoration: none;
         color: black;
-    }
-
-    .fa-xmark {
-        transition: transform 0.4s opacity 0.4s;
-        font-size: 20px;
-
-        &.hide {
-            transform: rotateY(180deg);
-            opacity: 0;
-        }
-    }
-
-    .fa-bars {
-        transition: transform 0.4s opacity 0.4s;
-        font-size: 20px;
-
-        &.hide {
-            transform: rotateY(180deg);
-            opacity: 0;
-        }
     }
 
     .header {
