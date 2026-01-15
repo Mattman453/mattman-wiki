@@ -1,10 +1,16 @@
 <script>
     import { inertia } from "@inertiajs/svelte";
     import { isMobile } from "../stores";
+    import { scale, slide } from "svelte/transition";
+    import Dropdown from "./Dropdown.svelte";
+    import { convertSpaceToUnderscore } from "../helper";
 
     let { children, ...otherProps } = $props();
 
     let error = $state('');
+    let openNavigator = $state(false);
+    let transition = $state(false);
+
 
     function logoutHandler(e) {
         e.preventDefault();
@@ -24,7 +30,7 @@
                         window.location.href = data.redirect;
                         break;
                     default:
-                        console.error('Unexpected response status ${response.status} with messages:');
+                        console.error(`Unexpected response status ${response.status} with messages:`);
                         console.error(data);
                         break;
                 }
@@ -46,17 +52,19 @@
 </svelte:head>
 
 <div class="header flex align-items-center {otherProps.user ? 'justify-content-space-between' : 'justify-content-center'}">
-    {#if otherProps.user}
-        <div style="order: 1; color: red;">
-            {error}
-        </div>
-        <form id="logout" onsubmit={logoutHandler}  style="order: 3;">
-            <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
-                Logout
-            </button>
-        </form>
+    {#if otherProps.gameInfo}
+        <!-- svelte-ignore a11y_consider_explicit_label -->
+        <button onclick={() => {if (openNavigator) {transition = true; openNavigator = false;} else {transition = true; openNavigator = true;}}} style="all: unset; cursor: pointer; z-index: 9999;">
+            {#if !openNavigator && transition == false}
+                <i class="fa-solid fa-bars" transition:scale={{duration: 150, opacity: 1}} onoutroend={() => transition = false}></i>
+            {:else if openNavigator && transition == false}
+                <i class="fa-solid fa-xmark" transition:scale={{duration: 150, opacity: 1}} onoutroend={() => transition = false}></i>
+            {/if}
+        </button>
+    {:else}
+        <div></div>
     {/if}
-    <div class="flex" style="order: 2;">
+    <div class="flex">
         {#if otherProps.gameInfo?.image}
             <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
         {/if}
@@ -66,7 +74,37 @@
             </div>
         </a>
     </div>
+    {#if otherProps.user}
+        <form id="logout" onsubmit={logoutHandler}>
+            <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
+                Logout
+            </button>
+        </form>
+    {:else}
+        <a use:inertia href="/login">
+            <div class="{$isMobile ? 'title-3' : 'title-1'}">
+                Login
+            </div>
+        </a>
+    {/if}
+    {#if openNavigator}
+        <div class="menu" transition:slide={{axis: 'x'}}>
+            <div class="flex column" style="margin-top: 3em;">
+                {#each otherProps.gameInfo.sections as section (section.subtitle)}
+                    <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">
+                        <div class="flex column" style="margin-left: 2em;">
+                            {#each section.sections as subSection}
+                                <a use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
+                            {/each}
+                        </div>
+                    </Dropdown>
+                {/each}
+            </div>
+        </div>
+        <div class="background" transition:slide={{axis: 'x'}} onclick={() => openNavigator = false}></div>
+    {/if}
 </div>
+
 
 <div style="margin: 2em;">
     {@render children()}
@@ -79,6 +117,9 @@
             About
         </div>
     </a>
+    <div style="color: red;">
+        {error}
+    </div>
 </div>
 
 <style lang="scss">
@@ -89,18 +130,60 @@
         color: black;
     }
 
+    .fa-xmark {
+        transition: transform 0.4s opacity 0.4s;
+        font-size: 20px;
+
+        &.hide {
+            transform: rotateY(180deg);
+            opacity: 0;
+        }
+    }
+
+    .fa-bars {
+        transition: transform 0.4s opacity 0.4s;
+        font-size: 20px;
+
+        &.hide {
+            transform: rotateY(180deg);
+            opacity: 0;
+        }
+    }
+
     .header {
         position: sticky;
         top: 0;
         box-shadow: 0 4px 60px rgba(0, 0, 0, 0.2);
         height: 3em;
-        z-index: 9999;
+        z-index: 999;
         background-color: white;
         gap: 20px;
         padding: 0 2em;
 
         @media screen and (max-width: variables.$mobileVW) {
             height: 2.5em;
+        }
+
+        .menu {
+            background-color: white;
+            z-index: 9998;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 500px;
+            height: 100vh;
+            gap: 1em;
+            box-sizing: border-box;
+        }
+
+        .background {
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9997;
         }
         
         a {

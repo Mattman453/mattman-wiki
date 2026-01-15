@@ -13,7 +13,7 @@ class Game extends Model
     protected $connection = 'mongodb';
 
     protected $fillable = [
-        'title',
+        'game',
         'image',
         'link',
     ];

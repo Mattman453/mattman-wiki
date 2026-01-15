@@ -9,7 +9,7 @@ use Inertia\Inertia;
 class MainController extends Controller
 {
     public function homeView(Request $request) {
-        $games = Game::select(['title', 'image', 'link'])->get();
+        $games = Game::select(['game', 'image'])->get();
         return Inertia::render('GameList', [
             'games' => $games,
         ]);
