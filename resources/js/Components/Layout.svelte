@@ -51,7 +51,7 @@
     <script src="https://kit.fontawesome.com/0cdd07cc84.js" crossorigin="anonymous"></script>
 </svelte:head>
 
-<div class="header flex align-items-center {otherProps.user ? 'justify-content-space-between' : 'justify-content-center'}">
+<div class="header flex align-items-center justify-content-space-between">
     {#if otherProps.gameInfo}
         <!-- svelte-ignore a11y_consider_explicit_label -->
         <button onclick={() => {if (openNavigator) {transition = true; openNavigator = false;} else {transition = true; openNavigator = true;}}} style="all: unset; cursor: pointer; z-index: 9999;">
@@ -81,11 +81,13 @@
             </button>
         </form>
     {:else}
-        <a use:inertia href="/login">
-            <div class="{$isMobile ? 'title-3' : 'title-1'}">
-                Login
-            </div>
-        </a>
+        <div style="">
+            <a use:inertia href="/login">
+                <div class="title-3">
+                    Login
+                </div>
+            </a>
+        </div>
     {/if}
     {#if openNavigator}
         <div class="menu" transition:slide={{axis: 'x'}}>

@@ -17,4 +17,8 @@ class Game extends Model
         'image',
         'link',
     ];
+
+    public function pages() {
+        return $this->hasMany(Page::class);
+    }
 }
