@@ -4,17 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\Page;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PageController extends Controller
 {
-    public function updatePage(Request $request) {
+    /**
+     * Update an existing page with new titles, bodies, and any other changes made. Should be a POST request.
+     * 
+     * @param Request The request sent to the server containing the new changes. Currently the entire page.
+     * @return JsonResponse sends a 404 if page does not exist, 403 if not authorized (must be admin or author role user),
+     *      400 if a new title is requested but already exists, 302 if the title change is accepted as the link will change,
+     *      or 200 if all changes are accepted.
+     */
+    public function updatePage(Request $request) : JsonResponse {
         if (!in_array('admin', Auth::user()->roles) && !in_array('author', Auth::user()->roles)) {
             return response()->json([
                 'error' => 'You do not have permission to perform this action.',
-            ], 400);
+            ], 403);
         }
         $request['game'] = str_replace('_', ' ', $request['game']);
         if ($request['subtitle']) $request['subtitle'] = str_replace('_', ' ', $request['subtitle']);
@@ -101,7 +111,13 @@ class PageController extends Controller
         ], 200);
     }
 
-    public function showStandardPage(Request $request) {
+    /**
+     * Get the view for a standard page fetched from the database. Should be a GET request.
+     * 
+     * @param Request $request contains the uri components to specify game, subtitle, and page to be fetched.
+     * @return Response either an Error page if the game or page does not exist, or the requested page.
+     */
+    public function showStandardPage(Request $request) : Response {
         $request['game'] = str_replace('_', ' ', $request['game']);
         if ($request['subtitle'])$request['subtitle'] = str_replace('_', ' ', $request['subtitle']);
         if ($request['page']) $request['page'] = str_replace('_', ' ', $request['page']);

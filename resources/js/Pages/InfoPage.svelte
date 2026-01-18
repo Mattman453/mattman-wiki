@@ -83,6 +83,8 @@
                         router.get(data.redirect);
                         break;
                     case 400:
+                    case 403:
+                    case 404:
                         error = data.error;
                         errorTimeout = setTimeout(() => {
                             error = '';
