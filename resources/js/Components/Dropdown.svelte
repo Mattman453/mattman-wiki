@@ -13,7 +13,7 @@
     {/if}
     <!-- svelte-ignore a11y_consider_explicit_label -->
     <button class="flex" style="justify-content: right; width: 100%;" onclick={() => visible = !visible}>
-        <i class="fa-solid" class:fa-chevron-right={!visible} class:fa-chevron-down={visible}></i>
+        <i class="fa-solid fa-chevron-down" class:rotate={!visible}></i>
     </button>
 </div>
 
@@ -24,6 +24,14 @@
 {/if}
 
 <style lang="scss">
+    .fa-chevron-down {
+        transition: transform 0.3s ease;
+
+        &.rotate {
+            transform: rotate(-90deg);
+        }
+    }
+
     .holder {
         flex: 1 6;
     }
