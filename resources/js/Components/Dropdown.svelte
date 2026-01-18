@@ -2,7 +2,7 @@
     import { inertia } from "@inertiajs/svelte";
     import { slide } from "svelte/transition";
 
-    let { title, children, link, visible = $bindable(false), ...otherProps } = $props();
+    let { title, children, link, visible = $bindable(), ...otherProps } = $props();
 </script>
 
 <div class="flex justify-content-space-between align-items-center holder" style="padding: 0.5em 2em;">

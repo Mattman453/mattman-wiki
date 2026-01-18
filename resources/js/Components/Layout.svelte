@@ -9,13 +9,11 @@
 
     let error = $state('');
     let openNavigator = $state(false);
-    let visible = $state(false);
+    let visible = $state([]);
     let transition = $state(false);
     let visibilityTimeout;
 
-    onDestroy(() => {
-        clearTimeout(visibilityTimeout);
-    });
+    onDestroy(() => clearTimeout(visibilityTimeout));
 
     function logoutHandler(e) {
         e.preventDefault();
@@ -51,7 +49,7 @@
     }
 
     function changeSidebarVisibility() {
-        visible = false;
+        for (let i = 0; i < visible.length; i++) visible[i] = false;
         transition = true;
         visibilityTimeout = setTimeout(() => {
             openNavigator = !openNavigator;
