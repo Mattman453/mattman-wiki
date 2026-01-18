@@ -145,18 +145,9 @@ class AuthController extends Controller
             return redirect(route('verification.notice'));
         }
 
-        return Inertia::render('Auth/Login');
-    }
-
-    public function getRegisterView(Request $request) {
-        if (Auth::check()) {
-            if (Auth::user()->hasVerifiedEmail()) {
-                return redirect(route('game.home'));
-            }
-            return redirect(route('verification.notice'));
-        }
-
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Login', [
+            'login' => true,
+        ]);
     }
 
     public function getVerifyEmailView(Request $request) {
