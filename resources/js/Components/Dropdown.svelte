@@ -1,11 +1,11 @@
 <script>
     import { inertia } from "@inertiajs/svelte";
+    import { slide } from "svelte/transition";
 
-    let visible = $state(false);
-    let { title, children, link, ...otherProps } = $props();
+    let { title, children, link, visible = $bindable(), ...otherProps } = $props();
 </script>
 
-<div class="flex justify-content-space-between align-items-center holder" style="padding: 0.5em 2em;">
+<div class="flex justify-content-space-between align-items-center dropdown-header" style="padding: 0.5em 2em;">
     {#if link}
         <a use:inertia href={link}>{title}</a>
     {:else}
@@ -13,16 +13,26 @@
     {/if}
     <!-- svelte-ignore a11y_consider_explicit_label -->
     <button class="flex" style="justify-content: right; width: 100%;" onclick={() => visible = !visible}>
-        <i class="fa-solid" class:fa-chevron-right={!visible} class:fa-chevron-down={visible}></i>
+        <i class="fa-solid fa-chevron-down" class:rotate={!visible}></i>
     </button>
 </div>
 
-<div class:hide={!visible}>
-    {@render children()}
-</div>
+{#if visible}
+    <div transition:slide={{duration: 300}}>
+        {@render children()}
+    </div>
+{/if}
 
 <style lang="scss">
-    .holder {
+    .fa-chevron-down {
+        transition: transform 0.3s ease;
+
+        &.rotate {
+            transform: rotate(-90deg);
+        }
+    }
+
+    .dropdown-header {
         flex: 1 6;
     }
 

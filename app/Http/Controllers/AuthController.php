@@ -6,17 +6,27 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use Inertia\Response;
 use MongoDB\Driver\Exception\BulkWriteException;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 
 class AuthController extends Controller
 {
-    public function login(Request $request) {
+    /**
+     * Try to login the user. if successful, regenerate the session and allow the user into sections that require being logged in.
+     * Should be sent as POST
+     * 
+     * @param Request $request info containing the email and password.
+     * @return JsonResponse either a redirection to intended page on success or a 400 HTTP error showing user value error.
+     */
+    public function login(Request $request) : JsonResponse {
         try {
             $credentials = $request->validate([
                 'email' => ['required' => 'email'],
@@ -44,7 +54,13 @@ class AuthController extends Controller
         ], 400);
     }
 
-    public function logout(Request $request) {
+    /**
+     * Logs a user out, invalidates all info stored in their session and regenerates their csrf token. Should be sent as POST.
+     * 
+     * @param Request $request info allowing the logout, invalidation, and regeneration of the token. Should be included with any request sent to server.
+     * @return JsonResponse redirect to either the intended url if set or home if not.
+     */
+    public function logout(Request $request) : JsonResponse {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -53,7 +69,14 @@ class AuthController extends Controller
         ], 302);
     }
 
-    public function register(Request $request) {
+    /**
+     * Create a new user and send out an email to verify their account. Should be sent as a POST request.
+     * Fails if credentials already exist, are not within set parameters, or something catastrophic happens.
+     * 
+     * @param Request $request carrier of information to attempt registration with.
+     * @return JsonResponse redirection to verification page on success or a message containing information on error.
+     */
+    public function register(Request $request) : JsonResponse {
         try {
             $newCredentials = $request->validate([
                 'email' => [ 'required', 'email', 'min:3', 'max:255' ],
@@ -86,7 +109,13 @@ class AuthController extends Controller
         }
     }
 
-    public function verifyEmail(EmailVerificationRequest $request) {
+    /**
+     * Should be accessed from email sent to user. Should be a POST request.
+     * 
+     * @param EmailVerificationRequest $request specific request containing info to allow server to verify email exists.
+     * @return RedirectResponse redirect to home page.
+     */
+    public function verifyEmail(EmailVerificationRequest $request) : RedirectResponse {
         try {
             $request->fulfill();
             unset(Auth::user()->email_verification_sent_at);
@@ -97,7 +126,14 @@ class AuthController extends Controller
         return redirect(route('game.home'));
     }
 
-    public function sendEmailVerification(Request $request) {
+    /**
+     * Allows user to request a new email be sent for verification. Should be a POST request.
+     * 
+     * @param Request $request contains info on the user being verified.
+     * @return JsonResponse redirection if already verified, info if email sent successfully,
+     *      or error if either not enough time has passed or the server cannot perform an action.
+     */
+    public function sendEmailVerification(Request $request) : JsonResponse {
         try {
             if (Auth::user()->hasVerifiedEmail()) {
                 Log::debug("Already verified.");
@@ -122,7 +158,13 @@ class AuthController extends Controller
         }
     }
 
-    private function sendVerificationNotice(Authenticatable $user) {
+    /**
+     * Actual function to send the email. Attempts to see if last time sent was in the past and send if true.
+     * 
+     * @param Authenticatable $user the user who wants to send a new verification email.
+     * @return bool returns true if able to send a new email or false otherwise.
+     */
+    private function sendVerificationNotice(Authenticatable $user) : bool {
         Log::debug("Checking whether to send.");
         $nextAvailableVerification = ($user->email_verification_sent_at != null) ?
             Carbon::createFromTimestampMs($user->email_verification_sent_at)->addSeconds(config('auth.email_verification.throttle')) :
@@ -137,7 +179,13 @@ class AuthController extends Controller
         return false;
     }
 
-    public function getLoginView(Request $request) {
+    /**
+     * Get the view for the Login page. Should be a GET request.
+     * 
+     * @return Response The Login view if a user is not logged in.
+     * @return RedirectResponse a redirect to either the home page if the email is verified or the verification page if not verified.
+     */
+    public function getLoginView() : Response | RedirectResponse {
         if (Auth::check()) {
             if (Auth::user()->hasVerifiedEmail()) {
                 return redirect(route('game.home'));
@@ -145,21 +193,18 @@ class AuthController extends Controller
             return redirect(route('verification.notice'));
         }
 
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Auth/Login', [
+            'login' => true,
+        ]);
     }
 
-    public function getRegisterView(Request $request) {
-        if (Auth::check()) {
-            if (Auth::user()->hasVerifiedEmail()) {
-                return redirect(route('game.home'));
-            }
-            return redirect(route('verification.notice'));
-        }
-
-        return Inertia::render('Auth/Register');
-    }
-
-    public function getVerifyEmailView(Request $request) {
+    /**
+     * Get the view for sending new verification emails. Should be a GET request.
+     * 
+     * @return Response The view for sending if the email is not verified.
+     * @return RedirectResponse the redirection to home if the email is already verified.
+     */
+    public function getVerifyEmailView() : Response | RedirectResponse {
         if (Auth::user()->hasVerifiedEmail()) return redirect(route('game.home'));
         return Inertia::render('Auth/Verify', [
             'verificationSentAt' => Auth::user()->email_verification_sent_at,

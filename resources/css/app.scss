@@ -8,6 +8,7 @@ body {
 
 div {
     font-size: 18px;
+    white-space: pre-line;
 }
 
 .flex {
@@ -16,18 +17,22 @@ div {
     &.column {
         flex-direction: column;
     }
-}
 
-.justify-content-center {
-    justify-content: center;
-}
+    &.flex-wrap {
+        flex-wrap: wrap;
+    }
 
-.justify-content-space-between {
-    justify-content: space-between;
-}
-
-.align-items-center {
-    align-items: center;
+    &.justify-content-center {
+        justify-content: center;
+    }
+    
+    &.justify-content-space-between {
+        justify-content: space-between;
+    }
+    
+    &.align-items-center {
+        align-items: center;
+    }
 }
 
 .hide {

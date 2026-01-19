@@ -1,16 +1,21 @@
 <script>
     import { inertia, router } from "@inertiajs/svelte";
-    import { isMobile } from "../stores";
-    import { scale, slide } from "svelte/transition";
-    import Dropdown from "./Dropdown.svelte";
     import { convertSpaceToUnderscore } from "../helper";
+    import { isMobile, windowInnerWidth } from "../stores";
+    import { onDestroy } from "svelte";
+    import { scale, slide } from "svelte/transition";
 
-    let { children, ...otherProps } = $props();
+    let { children, Sidebar, ...otherProps } = $props();
 
     let error = $state('');
     let openNavigator = $state(false);
+    let visible = $state([]);
     let transition = $state(false);
+    let visibilityTimeout;
 
+    onDestroy(() => {
+        clearTimeout(visibilityTimeout)
+    });
 
     function logoutHandler(e) {
         e.preventDefault();
@@ -37,12 +42,21 @@
             })
             .catch(exception => {
                 console.error(exception);
-                error = "Page has expired. Please reload the page and try again."
+                error = "Page has expired. Please reload the page and try again.";
             });
         })
         .catch(exception => {
             console.error(exception);
         });
+    }
+
+    function changeSidebarVisibility() {
+        for (let i = 0; i < visible.length; i++) visible[i] = false;
+        transition = true;
+        visibilityTimeout = setTimeout(() => {
+            openNavigator = !openNavigator;
+            visibilityTimeout = null;
+        }, 1);
     }
 </script>
 
@@ -52,9 +66,9 @@
 </svelte:head>
 
 <div class="header flex align-items-center justify-content-space-between">
-    {#if otherProps.gameInfo}
+    {#if Sidebar}
         <!-- svelte-ignore a11y_consider_explicit_label -->
-        <button onclick={() => {if (openNavigator) {transition = true; openNavigator = false;} else {transition = true; openNavigator = true;}}} style="all: unset; cursor: pointer; z-index: 9999;">
+        <button onclick={changeSidebarVisibility} style="all: unset; cursor: pointer; z-index: 9999;">
             {#if !openNavigator && transition == false}
                 <i class="fa-solid fa-bars" transition:scale={{duration: 150, opacity: 1}} onoutroend={() => transition = false}></i>
             {:else if openNavigator && transition == false}
@@ -65,13 +79,13 @@
         <div></div>
     {/if}
     <div class="flex justify-content-center align-items-center">
-        {#if otherProps.gameInfo?.image}
+        {#if otherProps.gameInfo?.image && $windowInnerWidth > 600}
             <a use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}">
                 <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
             </a>
         {/if}
         <a use:inertia href="/">
-            <div class="{$isMobile ? 'title-3' : 'title-1'}">
+            <div class="{$isMobile ? 'title-4' : 'title-1'}" style="text-align: center;">
                 Matt's Game Guides
             </div>
         </a>
@@ -79,40 +93,34 @@
     {#if otherProps.user}
         <form id="logout" onsubmit={logoutHandler}>
             <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
-                Logout
+                <div class="{$isMobile ? 'title-5' : 'title-4'}">
+                    Logout
+                </div>
             </button>
         </form>
     {:else}
         <div style="">
             <a use:inertia href="/login">
-                <div class="title-3">
+                <div class="{$isMobile ? 'title-5' : 'title-4'}">
                     Login
                 </div>
             </a>
         </div>
     {/if}
     {#if openNavigator}
-        <div class="menu" transition:slide={{axis: 'x'}}>
-            <div class="flex column" style="margin-top: 3em;">
-                {#each otherProps.gameInfo.sections as section (section.subtitle)}
-                    <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">
-                        <div class="flex column" style="margin-left: 2em;">
-                            {#each section.sections as subSection}
-                                <a onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
-                            {/each}
-                        </div>
-                    </Dropdown>
-                {/each}
+        <div class="menu flex column" transition:slide={{axis: 'x'}}>
+            <div>
+                <Sidebar bind:openNavigator bind:visible {...otherProps} />
             </div>
         </div>
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="background" transition:slide={{axis: 'x'}} onclick={() => openNavigator = false}></div>
+        <div class="background" transition:slide={{axis: 'x'}} onclick={changeSidebarVisibility}></div>
     {/if}
 </div>
 
 
-<div style="margin: 1em 2em;">
+<div class="children-container">
     {@render children()}
 </div>
 
@@ -131,6 +139,14 @@
 <style lang="scss">
     @use "../../css/variables";
 
+    .children-container {
+        margin: 1em 2em;
+
+        @media screen and (max-width: variables.$mobileVW) {
+            margin: 0;
+        }
+    }
+
     a {
         text-decoration: none;
         color: black;
@@ -148,6 +164,8 @@
 
         @media screen and (max-width: variables.$mobileVW) {
             height: 2.5em;
+            padding: 0 1em;
+            gap: 10px;
         }
 
         .menu {
@@ -160,6 +178,7 @@
             height: 100vh;
             gap: 1em;
             box-sizing: border-box;
+            padding-top: 3em;
         }
 
         .background {

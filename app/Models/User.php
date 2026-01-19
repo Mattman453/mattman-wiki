@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -46,7 +47,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function pages() {
+    /**
+     * Get the pages that are associated with this user.
+     * 
+     * @return HasMany the relationship allowing the fetching of all pages related to the User.
+     */
+    public function pages() : HasMany {
         return $this->hasMany(Page::class);
     }
 }

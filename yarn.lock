@@ -132,10 +132,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.27.2.tgz#9e585ab6086bef994c6e8a5b3a0481219ada862b"
   integrity sha512-sRdU18mcKf7F+YgheI/zGf5alZatMUTKj/jNS6l744f9u3WFu4v7twcUI9vu4mknF4Y9aDlblIie0IM+5xxaqQ==
 
-"@inertiajs/core@2.3.6":
-  version "2.3.6"
-  resolved "https://registry.yarnpkg.com/@inertiajs/core/-/core-2.3.6.tgz#526167ea8eab41f4ca736fc543dc6b792c5c975d"
-  integrity sha512-3JzJ04HBoGK/OlDZyzhD0WFB9jH3KNT32fQ45zWMFa4eGthm1kuSSF+BgPAKQQm8jS38whx2WuhMOsH+Ec++7A==
+"@inertiajs/core@2.3.10":
+  version "2.3.10"
+  resolved "https://registry.yarnpkg.com/@inertiajs/core/-/core-2.3.10.tgz#10c2335bc79fdb2aede48a7e5980d1e230e7073e"
+  integrity sha512-shoDHBtbFngFnHomGcLEhIEnPr+IjqxFo3PnWxurKNE5zUfViEyMYC0ZK36OVI6AeYKtHdrdyRGVeRWlOoTXHQ==
   dependencies:
     "@types/lodash-es" "^4.17.12"
     axios "^1.13.2"
@@ -143,12 +143,12 @@
     lodash-es "^4.17.21"
     qs "^6.14.1"
 
-"@inertiajs/svelte@^2.1.2":
-  version "2.3.6"
-  resolved "https://registry.yarnpkg.com/@inertiajs/svelte/-/svelte-2.3.6.tgz#79881ef348abb5ba54448d771f16818a22904381"
-  integrity sha512-wyPjKth4OMEUdy51YAnMdkZHekEYAJye1wnnUVkq0vHuZ2hvIcXQJFgCK0GWrJOTNqMHOUSx+pXpxMxdZKgzcg==
+"@inertiajs/svelte@^2.3.10":
+  version "2.3.10"
+  resolved "https://registry.yarnpkg.com/@inertiajs/svelte/-/svelte-2.3.10.tgz#0e542bb01c159782e15b7a2da9597af80b670fdc"
+  integrity sha512-r5Z3OstKsP+AMcf3hZxtgnHygmqiyY0pfWk6Axvl2iBN8hq+eiyNLG7ZCUY6JXtV/fu05DsUpg5cjpG4iKCwZA==
   dependencies:
-    "@inertiajs/core" "2.3.6"
+    "@inertiajs/core" "2.3.10"
     "@types/lodash-es" "^4.17.12"
     laravel-precognition "^1.0.0"
     lodash-es "^4.17.21"
@@ -454,9 +454,9 @@
     "@types/lodash" "*"
 
 "@types/lodash@*":
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.21.tgz#b806831543d696b14f8112db600ea9d3a1df6ea4"
-  integrity sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==
+  version "4.17.23"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.23.tgz#c1bb06db218acc8fc232da0447473fc2fb9d9841"
+  integrity sha512-RDvF6wTulMPjrNdCoYRC8gNR880JNGT8uB+REUpC2Ns4pRqQJhGz90wh7rgdXDPpCczF3VGktDuFGVnz8zP7HA==
 
 acorn@^8.12.1, acorn@^8.15.0:
   version "8.15.0"
@@ -826,7 +826,7 @@ laravel-precognition@^1.0.0:
     axios "^1.4.0"
     lodash-es "^4.17.21"
 
-laravel-vite-plugin@^2.0.0:
+laravel-vite-plugin@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/laravel-vite-plugin/-/laravel-vite-plugin-2.0.1.tgz#6708acd1db21e626b300b528c0447c935ce30d84"
   integrity sha512-zQuvzWfUKQu9oNVi1o0RZAJCwhGsdhx4NEOyrVQwJHaWDseGP9tl7XUPLY2T8Cj6+IrZ6lmyxlR1KC8unf3RLA==
@@ -1096,10 +1096,10 @@ svelte-preprocess@^6.0.3:
   resolved "https://registry.yarnpkg.com/svelte-preprocess/-/svelte-preprocess-6.0.3.tgz#fdc1f9dc41b6f22bf8b1f059e9f21eaaae181eeb"
   integrity sha512-PLG2k05qHdhmRG7zR/dyo5qKvakhm8IJ+hD2eFRQmMLHp7X3eJnjeupUtvuRpbNiF31RjVw45W+abDwHEmP5OA==
 
-svelte@^5.46.4:
-  version "5.46.4"
-  resolved "https://registry.yarnpkg.com/svelte/-/svelte-5.46.4.tgz#7aaca9ffb1fac3ed840ea3e7aa2a92b03fc11268"
-  integrity sha512-VJwdXrmv9L8L7ZasJeWcCjoIuMRVbhuxbss0fpVnR8yorMmjNDwcjIH08vS6wmSzzzgAG5CADQ1JuXPS2nwt9w==
+svelte@^5.47.0:
+  version "5.47.0"
+  resolved "https://registry.yarnpkg.com/svelte/-/svelte-5.47.0.tgz#82c9fc587a7821a90550e13b3f75cb2461f370e9"
+  integrity sha512-LRhAvzhvb4lHLNAcAMJZ2ifUSOif8OuItF4khbssrIeitj01GjpumeeauSnCeAGnSI+X6P2R3Z7S4c5STv4iQQ==
   dependencies:
     "@jridgewell/remapping" "^2.3.4"
     "@jridgewell/sourcemap-codec" "^1.5.0"
@@ -1166,10 +1166,10 @@ vite-plugin-full-reload@^1.1.0:
     picocolors "^1.0.0"
     picomatch "^2.3.1"
 
-vite@^7.0.4:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-7.3.0.tgz#066c7a835993a66e82004eac3e185d0d157fd658"
-  integrity sha512-dZwN5L1VlUBewiP6H9s2+B3e3Jg96D0vzN+Ry73sOefebhYr9f94wwkMNN/9ouoU8pV1BqA1d1zGk8928cx0rg==
+vite@^7.3.1:
+  version "7.3.1"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-7.3.1.tgz#7f6cfe8fb9074138605e822a75d9d30b814d6507"
+  integrity sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==
   dependencies:
     esbuild "^0.27.0"
     fdir "^6.5.0"

@@ -3,6 +3,7 @@
     import Layout from "../Components/Layout.svelte";
     import { convertSpaceToUnderscore } from "../helper";
     import { inertia, router } from "@inertiajs/svelte";
+    import GameSidebar from "../Components/GameSidebar.svelte";
 
     let { gameInfo, page, user, csrfToken, ...otherProps } = $props();
     let successTimeout, errorTimeout;
@@ -66,6 +67,7 @@
                         message = data.message;
                         successTimeout = setTimeout(() => {
                             message = '';
+                            successTimeout = null;
                         }, 10000);
                         window.scrollTo(0, 0);
                         editing = false;
@@ -74,15 +76,19 @@
                         message = data.message;
                         successTimeout = setTimeout(() => {
                             message = '';
+                            successTimeout = null;
                         }, 10000);
                         window.scrollTo(0, 0);
                         editing = false;
                         router.get(data.redirect);
                         break;
                     case 400:
+                    case 403:
+                    case 404:
                         error = data.error;
                         errorTimeout = setTimeout(() => {
                             error = '';
+                            errorTimeout = null;
                         }, 20000);
                         window.scrollTo(0, 0);
                         break;
@@ -119,7 +125,7 @@
     }
 </script>
 
-<Layout {gameInfo} {user} {csrfToken} {...otherProps}>
+<Layout {gameInfo} {user} {csrfToken} {...otherProps} Sidebar={GameSidebar}>
     <div class="flex column align-items-center">
         {#if message}
             <div class="title-2" style="color: green; max-width: 600px;">{message}</div>
@@ -196,7 +202,7 @@
                 {/each}
             </div>
             <hr>
-            <div class="flex align-items-center justify-content-center">
+            <div class="flex align-items-center justify-content-center" style="max-width: 95vw;">
                 <table>
                     <thead>
                         <tr>
@@ -218,7 +224,7 @@
                                         <div>
                                             <a use:inertia class="title-4" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">{section.subtitle}</a>
                                         </div>
-                                        <div class="flex" style="gap: 0.5em;">
+                                        <div class="flex flex-wrap justify-content-center align-items-center" style="gap: 0.5em;">
                                             {#each section.sections as subSection}
                                                 <a use:inertia class="title-6" style="margin: 0.1em 0;" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
                                             {/each}
@@ -236,11 +242,11 @@
 
 <style lang="scss">
     .title-1 {
-        margin: 1em;
+        margin: 0.5em 1em;
     }
 
     .title-6 {
-        margin: 1em 2em;
+        margin: 0.5em 2em;
         font-size: 16px;
         white-space: pre-line;
     }
