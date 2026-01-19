@@ -25,76 +25,33 @@
         e.preventDefault();
         error = '';
         success = '';
-        if (!addingPage) {
-            addingPage = true;
-            focusTimeout = setTimeout(() => {
-                document.getElementById("page_name").focus();
-                focusTimeout = null;
-            }, 1);
-            return;
+        let fetchString = '';
+        if (e.target.id.includes("section")) {
+            if (!addingSection) {
+                addingSection = true;
+                focusTimeout = setTimeout(() => {
+                    document.getElementById("section_name").focus();
+                    focusTimeout = null;
+                }, 1);
+                return;
+            }
+            fetchString = '/game/new_section';
+        }
+        else {
+            if (!addingPage) {
+                addingPage = true;
+                focusTimeout = setTimeout(() => {
+                    document.getElementById("page_name").focus();
+                    focusTimeout = null;
+                }, 1);
+                return;
+            }
+            fetchString = '/game/new_page';
         }
 
         let formData = new FormData(e.target);
         formData.append('game', otherProps.gameInfo.game);
-        fetch('/game/new_page', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': otherProps.csrfToken,
-            },
-            body: formData,
-        })
-        .then(response => {
-            response.json().then(data => {
-                switch (response.status) {
-                    case 200:
-                        addingSection = false;
-                        success = data.message;
-                        successTimeout = setTimeout(() => {
-                            success = '';
-                            router.reload();
-                            successTimeout = null;
-                        }, 2000);
-                        break;
-                    case 400:
-                        error = data.error;
-                        errorTimeout = setTimeout(() => {
-                            error = '';
-                            errorTimeout = null;
-                        }, 5000);
-                        break;
-                    default:
-                        console.error(`Unexpected response status ${response.status} with messages:`);
-                        console.error(data);
-                        break;
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                error = "Page has expired. Please reload the page and try again.";
-            });
-        })
-        .catch(error => {
-            console.error(error);
-            error = "Page has expired. Please reload the page and try again.";
-        });
-    }
-
-    function newSectionHandler(e) {
-        e.preventDefault();
-        error = '';
-        success = '';
-        if (!addingSection) {
-            addingSection = true;
-            focusTimeout = setTimeout(() => {
-                document.getElementById("section_name").focus();
-                focusTimeout = null;
-            }, 1);
-            return;
-        }
-
-        let formData = new FormData(e.target);
-        formData.append('game', otherProps.gameInfo.game);
-        fetch('/game/new_section', {
+        fetch(fetchString, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': otherProps.csrfToken,
@@ -152,7 +109,7 @@
                 <button type="submit" class="page-button">Submit</button>
             </form>
         {:else}
-            <button class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
+            <button id="new_page_button_{index}" class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
                 [+] New Page
             </button>
         {/if}
@@ -162,12 +119,12 @@
 
 {#if user?.roles?.includes("admin") || user?.roles?.includes("author")}
     {#if addingSection}
-        <form id="new_section_form" class="flex new-section-form" onsubmit={newSectionHandler}>
+        <form id="new_section_form" class="flex new-section-form" onsubmit={newPageHandler}>
             <input type="text" id="section_name" name="section_name" placeholder="Section Name" class="section-name" minlength="1" required>
             <button type="submit" class="section-button">Submit</button>
         </form>
     {:else}
-        <button class="new-section-button" style="margin: 5px 2em; {addingSection ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newSectionHandler}>
+        <button id="new_section_button" class="new-section-button" style="margin: 5px 2em; {addingSection ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
             [+] New Section
         </button>
     {/if}

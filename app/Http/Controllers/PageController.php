@@ -207,7 +207,7 @@ class PageController extends Controller
         $game->save();
 
         return response()->json([
-            'message' => 'Section created.',
+            'message' => 'Page created.',
         ], 200);
     }
 }
