@@ -100,16 +100,18 @@
                 <a class="page-link" onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(page)}">{page}</a>
             {/each}
         </div>
-        {#if addingPage}
-            <form id="new_page_form" class="flex new-page-form align-items-center" onsubmit={newPageHandler}>
-                <input type="hidden" id="subtitle" name="subtitle" value={section.subtitle}>
-                <input type="text" id="page_name" name="page_name" placeholder="Page Name" class="page-name" minlength="1" required>
-                <button type="submit" class="page-button">Submit</button>
-            </form>
-        {:else}
-            <button id="new_page_button_{index}" class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
-                [+] New Page
-            </button>
+        {#if user?.roles?.includes("admin") || user?.roles?.includes("author")}
+            {#if addingPage}
+                <form id="new_page_form" class="flex new-page-form align-items-center" onsubmit={newPageHandler}>
+                    <input type="hidden" id="subtitle" name="subtitle" value={section.subtitle}>
+                    <input type="text" id="page_name" name="page_name" placeholder="Page Name" class="page-name" minlength="1" required>
+                    <button type="submit" class="page-button">Submit</button>
+                </form>
+            {:else}
+                <button id="new_page_button_{index}" class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
+                    [+] New Page
+                </button>
+            {/if}
         {/if}
     </Dropdown>
     <hr>
