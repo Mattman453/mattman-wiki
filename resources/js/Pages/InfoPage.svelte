@@ -64,11 +64,12 @@
             response.json().then(data => {
                 switch(response.status) {
                     case 200:
-                        message = data.message;
+                        message = data.message + 'Reloading...';
                         successTimeout = setTimeout(() => {
                             message = '';
+                            router.reload();
                             successTimeout = null;
-                        }, 10000);
+                        }, 1000);
                         window.scrollTo(0, 0);
                         editing = false;
                         break;
