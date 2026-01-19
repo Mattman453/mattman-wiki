@@ -202,7 +202,7 @@
                 {/each}
             </div>
             <hr>
-            <div class="flex align-items-center justify-content-center">
+            <div class="flex align-items-center justify-content-center" style="max-width: 95vw;">
                 <table>
                     <thead>
                         <tr>
@@ -224,7 +224,7 @@
                                         <div>
                                             <a use:inertia class="title-4" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">{section.subtitle}</a>
                                         </div>
-                                        <div class="flex" style="gap: 0.5em;">
+                                        <div class="flex flex-wrap justify-content-center align-items-center" style="gap: 0.5em;">
                                             {#each section.sections as subSection}
                                                 <a use:inertia class="title-6" style="margin: 0.1em 0;" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
                                             {/each}
@@ -242,11 +242,11 @@
 
 <style lang="scss">
     .title-1 {
-        margin: 1em;
+        margin: 0.5em 1em;
     }
 
     .title-6 {
-        margin: 1em 2em;
+        margin: 0.5em 2em;
         font-size: 16px;
         white-space: pre-line;
     }

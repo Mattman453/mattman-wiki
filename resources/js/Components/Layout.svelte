@@ -1,7 +1,7 @@
 <script>
     import { inertia, router } from "@inertiajs/svelte";
     import { convertSpaceToUnderscore } from "../helper";
-    import { isMobile } from "../stores";
+    import { isMobile, windowInnerWidth } from "../stores";
     import { onDestroy } from "svelte";
     import { scale, slide } from "svelte/transition";
 
@@ -77,13 +77,13 @@
         <div></div>
     {/if}
     <div class="flex justify-content-center align-items-center">
-        {#if otherProps.gameInfo?.image}
+        {#if otherProps.gameInfo?.image && $windowInnerWidth > 600}
             <a use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}">
                 <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
             </a>
         {/if}
         <a use:inertia href="/">
-            <div class="{$isMobile ? 'title-3' : 'title-1'}">
+            <div class="{$isMobile ? 'title-4' : 'title-1'}" style="text-align: center;">
                 Matt's Game Guides
             </div>
         </a>
@@ -91,13 +91,13 @@
     {#if otherProps.user}
         <form id="logout" onsubmit={logoutHandler}>
             <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
-                Logout
+                <div class="{$isMobile ? 'title-5' : 'title-4'}">Logout</div>
             </button>
         </form>
     {:else}
         <div style="">
             <a use:inertia href="/login">
-                <div class="title-3">
+                <div class="{$isMobile ? 'title-5' : 'title-4'}">
                     Login
                 </div>
             </a>
@@ -116,7 +116,7 @@
 </div>
 
 
-<div style="margin: 1em 2em;">
+<div class="children-container">
     {@render children()}
 </div>
 
@@ -135,6 +135,14 @@
 <style lang="scss">
     @use "../../css/variables";
 
+    .children-container {
+        margin: 1em 2em;
+
+        @media screen and (max-width: variables.$mobileVW) {
+            margin: 0;
+        }
+    }
+
     a {
         text-decoration: none;
         color: black;
@@ -152,6 +160,8 @@
 
         @media screen and (max-width: variables.$mobileVW) {
             height: 2.5em;
+            padding: 0 1em;
+            gap: 10px;
         }
 
         .menu {
