@@ -151,36 +151,20 @@ class PageController extends Controller
     }
 
     public function createpage(Request $request) : JsonResponse {
-        if (Gate::denies('author')) {
-            return response()->json([
-                'error' => 'You are not authorized to create new sections.',
-            ], 403);
-        }
+        if (Gate::denies('author')) return response()->json(['error' => 'You are not authorized to create new sections.'], 403);
 
         $pages = Page::where(['game' => $request['game']]);
         if ($request['section_name']) $pages = $pages->where(['subtitle' => $request['section_name']]);
         else if ($request['page_name']) $pages = $pages->where(['subtitle' => $request['subtitle'], 'page' => $request['page_name']]);
-        else {
-            return response()->json([
-                'error' => 'section_name or page_name is required.',
-            ], 400);
-        } 
+        else return response()->json(['error' => 'section_name or page_name is required.'], 400);
 
         $pages = $pages->get();
-        if (count($pages) > 0) {
-            return response()->json([
-                'error' => 'Page/Section already exists.',
-            ], 400);
-        }
+        if (count($pages) > 0) return response()->json(['error' => 'Page/Section already exists.'], 400);
 
         $initSection = [0 => ['title' => 'Init', 'body' => ['type' => 'text', 'data' => 'Init']]];
         if ($request['section_name']) Page::create(['game' => $request['game'], 'subtitle' => $request['section_name'], 'sections' => $initSection]);
         else if ($request['page_name']) Page::create(['game' => $request['game'], 'subtitle' => $request['subtitle'], 'page' => $request['page_name'], 'sections' => $initSection]);
-        else {
-            return response()->json([
-                'error' => 'section_name or page_name is required.',
-            ], 400);
-        }
+        else return response()->json(['error' => 'section_name or page_name is required.'], 400);
 
         $game = Game::where(['game' => $request['game']])->first();
         $sections = $game->sections;
@@ -193,11 +177,7 @@ class PageController extends Controller
                 }
             }
         }
-        else {
-            return response()->json([
-                'error' => 'section_name or page_name is required.',
-            ], 400);
-        }
+        else return response()->json(['error' => 'section_name or page_name is required.'], 400);
         $game->sections = $sections;
         $game->save();
 
