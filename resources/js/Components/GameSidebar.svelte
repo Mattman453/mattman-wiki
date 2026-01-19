@@ -1,14 +1,141 @@
 <script>
-    import { inertia } from "@inertiajs/svelte";
+    import { inertia, router } from "@inertiajs/svelte";
     import Dropdown from "../Components/Dropdown.svelte";
     import { convertSpaceToUnderscore } from "../helper";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
-    let { openNavigator = $bindable(false), visible = $bindable([]), ...otherProps } = $props();
+    let { openNavigator = $bindable(false), visible = $bindable([]), user, ...otherProps } = $props();
+
+    let addingSection = $state(false);
+    let addingPage = $state(false);
+    let success = $state('');
+    let error = $state('');
+    
+    let focusTimeout, successTimeout, errorTimeout;
 
     onMount(() => {
         for (let i = 0; i < otherProps.gameInfo.sections.length; i++) visible[i] = false;
     });
+
+    onDestroy(() => {
+        clearTimeout(focusTimeout);
+    })
+
+    function newPageHandler(e) {
+        e.preventDefault();
+        error = '';
+        success = '';
+        if (!addingPage) {
+            addingPage = true;
+            focusTimeout = setTimeout(() => {
+                document.getElementById("page_name").focus();
+                focusTimeout = null;
+            }, 1);
+            return;
+        }
+
+        let formData = new FormData(e.target);
+        formData.append('game', otherProps.gameInfo.game);
+        fetch('/game/new_page', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': otherProps.csrfToken,
+            },
+            body: formData,
+        })
+        .then(response => {
+            response.json().then(data => {
+                switch (response.status) {
+                    case 200:
+                        addingSection = false;
+                        success = data.message;
+                        successTimeout = setTimeout(() => {
+                            success = '';
+                            router.reload();
+                            successTimeout = null;
+                        }, 2000);
+                        break;
+                    case 400:
+                        error = data.error;
+                        errorTimeout = setTimeout(() => {
+                            error = '';
+                            errorTimeout = null;
+                        }, 5000);
+                        break;
+                    default:
+                        console.error(`Unexpected response status ${response.status} with messages:`);
+                        console.error(data);
+                        break;
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                error = "Page has expired. Please reload the page and try again.";
+            });
+        })
+        .catch(error => {
+            console.error(error);
+            error = "Page has expired. Please reload the page and try again.";
+        });
+    }
+
+    function newSectionHandler(e) {
+        e.preventDefault();
+        error = '';
+        success = '';
+        if (!addingSection) {
+            addingSection = true;
+            focusTimeout = setTimeout(() => {
+                document.getElementById("section_name").focus();
+                focusTimeout = null;
+            }, 1);
+            return;
+        }
+
+        let formData = new FormData(e.target);
+        formData.append('game', otherProps.gameInfo.game);
+        fetch('/game/new_section', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': otherProps.csrfToken,
+            },
+            body: formData,
+        })
+        .then(response => {
+            response.json().then(data => {
+                switch (response.status) {
+                    case 200:
+                        addingSection = false;
+                        success = data.message;
+                        successTimeout = setTimeout(() => {
+                            success = '';
+                            router.reload();
+                            successTimeout = null;
+                        }, 2000);
+                        break;
+                    case 400:
+                        error = data.error;
+                        errorTimeout = setTimeout(() => {
+                            error = '';
+                            errorTimeout = null;
+                        }, 5000);
+                        break;
+                    default:
+                        console.error(`Unexpected response status ${response.status} with messages:`);
+                        console.error(data);
+                        break;
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                error = "Page has expired. Please reload the page and try again.";
+            });
+        })
+        .catch(error => {
+            console.error(error);
+            error = "Page has expired. Please reload the page and try again.";
+        });
+    }
 </script>
 
 {#each otherProps.gameInfo.sections as section, index (section.subtitle)}
@@ -18,13 +145,94 @@
                 <a onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
             {/each}
         </div>
+        {#if addingPage}
+            <form id="new_page_form" class="flex new-page-form align-items-center" onsubmit={newPageHandler}>
+                <input type="hidden" id="subtitle" name="subtitle" value={section.subtitle}>
+                <input type="text" id="page_name" name="page_name" placeholder="Page Name" class="page-name" minlength="1" required>
+                <button type="submit" class="page-button">Submit</button>
+            </form>
+        {:else}
+            <button class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
+                [+] New Page
+            </button>
+        {/if}
     </Dropdown>
+    <hr>
 {/each}
+
+{#if user?.roles?.includes("admin") || user?.roles?.includes("author")}
+    {#if addingSection}
+        <form id="new_section_form" class="flex new-section-form" onsubmit={newSectionHandler}>
+            <input type="text" id="section_name" name="section_name" placeholder="Section Name" class="section-name" minlength="1" required>
+            <button type="submit" class="section-button">Submit</button>
+        </form>
+    {:else}
+        <button class="new-section-button" style="margin: 5px 2em; {addingSection ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newSectionHandler}>
+            [+] New Section
+        </button>
+    {/if}
+{/if}
+
+{#if success}
+    <div class="title-3" style="color: green; margin: 5px 2em;">{success}</div>
+{/if}
+
+{#if error}
+    <div class="title-3" style="color: red; margin: 5px 2em;">{error}</div>
+{/if}
 
 <style lang="scss">
     a {
         text-decoration: none;
         color: black;
         padding: 5px 10px;
+    }
+
+    .new-section-button {
+        border: none;
+        background-color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .new-page-button {
+        border: none;
+        background-color: white;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .new-section-form {
+        margin: 5px 2em;
+    }
+    
+    .new-page-form {
+        margin: 5px 2em;
+    }
+
+    .section-name {
+        font-size: 16px;
+        padding: 0.2em;
+        border-radius: 10px 0 0 10px;
+        border: 1px solid black;
+    }
+    
+    .page-name {
+        font-size: 16px;
+        padding: 0.2em;
+        margin: 5px 0 5px 0.5em;
+        border-radius: 10px 0 0 10px;
+        border: 1px solid black;
+    }
+
+    .section-button {
+        border-radius: 0 10px 10px 0;
+        border: 1px solid black;
+    }
+    
+    .page-button {
+        border-radius: 0 10px 10px 0;
+        border: 1px solid black;
+        height: 1.95em;
     }
 </style>

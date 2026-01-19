@@ -21,6 +21,8 @@ Route::post('/send-verification', 'App\Http\Controllers\AuthController@sendEmail
 // Standard Pages
 Route::get('/about', 'App\Http\Controllers\MainController@aboutView');
 Route::prefix('/game')->group(function () {
+    Route::post('/new_section', 'App\Http\Controllers\PageController@createSection')->middleware(['verified']);
+    Route::post('/new_page', 'App\Http\Controllers\PageController@createPage')->middleware(['verified']);
     Route::post('/edit/{game}/{subtitle?}/{page?}', 'App\Http\Controllers\PageController@updatePage')->middleware(['auth', 'verified']);
     Route::get('/{game}/{subtitle?}/{page?}', 'App\Http\Controllers\PageController@showStandardPage');
 });

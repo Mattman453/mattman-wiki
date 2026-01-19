@@ -40,7 +40,7 @@
             })
             .catch(exception => {
                 console.error(exception);
-                error = "Page has expired. Please reload the page and try again."
+                error = "Page has expired. Please reload the page and try again.";
             });
         })
         .catch(exception => {

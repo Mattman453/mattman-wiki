@@ -7,6 +7,7 @@ use App\Models\Page;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -147,5 +148,66 @@ class PageController extends Controller
             'gameInfo' => $game[0],
             'page' => $page[0],
         ]);
+    }
+
+    public function createSection(Request $request) : JsonResponse {
+        if (Gate::denies('author')) {
+            return response()->json([
+                'error' => 'You are not authorized to create new sections.',
+            ], 403);
+        }
+
+        $pages = Page::where(['game' => $request['game'], 'subtitle' => $request['section_name']])->get();
+        if (count($pages) > 0) {
+            return response()->json([
+                'error' => 'Section already exists.',
+            ], 400);
+        }
+
+        $initSection = [0 => ['title' => 'Init', 'body' => ['type' => 'text', 'data' => 'Init']]];
+        Page::create(['game' => $request['game'], 'subtitle' => $request['section_name'], 'sections' => $initSection]);
+
+        $game = Game::where(['game' => $request['game']])->first();
+        $sections = $game->sections;
+        $sections[] = ['subtitle' => $request['section_name']];
+        $game->sections = $sections;
+        $game->save();
+
+        return response()->json([
+            'message' => 'Section created.',
+        ], 200);
+    }
+
+    public function createpage(Request $request) : JsonResponse {
+        if (Gate::denies('author')) {
+            return response()->json([
+                'error' => 'You are not authorized to create new sections.',
+            ], 403);
+        }
+
+        $pages = Page::where(['game' => $request['game'], 'subtitle' => $request['subtitle'], 'page' => $request['page_name']])->get();
+        if (count($pages) > 0) {
+            return response()->json([
+                'error' => 'Page already exists.',
+            ], 400);
+        }
+
+        $initSection = [0 => ['title' => 'Init', 'body' => ['type' => 'text', 'data' => 'Init']]];
+        Page::create(['game' => $request['game'], 'subtitle' => $request['subtitle'], 'page' => $request['page_name'], 'sections' => $initSection]);
+
+        $game = Game::where(['game' => $request['game']])->first();
+        $sections = $game->sections;
+        foreach ($sections as $i => $section) {
+            if ($section['subtitle'] == $request['subtitle']) {
+                if (!isset($section['sections'])) $sections[$i]['sections'] = [];
+                $sections[$i]['sections'][] = $request['page_name'];
+            }
+        }
+        $game->sections = $sections;
+        $game->save();
+
+        return response()->json([
+            'message' => 'Section created.',
+        ], 200);
     }
 }
