@@ -79,7 +79,7 @@ class PageController extends Controller
                 'redirect' => '/game/' . str_replace(' ', '_', $request['game']) . '/' . str_replace(' ', '_', $request['subtitle']) . '/' . str_replace(' ', '_', $request['title']),
             ], 302);
         } 
-        else if ($request['subtitle'] && $request['title'] != $request['subtitle']) {
+        else if ($request['subtitle'] && !$request['page'] && $request['title'] != $request['subtitle']) {
             $game = Game::where(['game' => $request['game']])->first();
             $sections = $game->sections;
             $sectionIndex = -1;
@@ -150,34 +150,6 @@ class PageController extends Controller
         ]);
     }
 
-    public function createSection(Request $request) : JsonResponse {
-        if (Gate::denies('author')) {
-            return response()->json([
-                'error' => 'You are not authorized to create new sections.',
-            ], 403);
-        }
-
-        $pages = Page::where(['game' => $request['game'], 'subtitle' => $request['section_name']])->get();
-        if (count($pages) > 0) {
-            return response()->json([
-                'error' => 'Section already exists.',
-            ], 400);
-        }
-
-        $initSection = [0 => ['title' => 'Init', 'body' => ['type' => 'text', 'data' => 'Init']]];
-        Page::create(['game' => $request['game'], 'subtitle' => $request['section_name'], 'sections' => $initSection]);
-
-        $game = Game::where(['game' => $request['game']])->first();
-        $sections = $game->sections;
-        $sections[] = ['subtitle' => $request['section_name']];
-        $game->sections = $sections;
-        $game->save();
-
-        return response()->json([
-            'message' => 'Section created.',
-        ], 200);
-    }
-
     public function createpage(Request $request) : JsonResponse {
         if (Gate::denies('author')) {
             return response()->json([
@@ -185,23 +157,46 @@ class PageController extends Controller
             ], 403);
         }
 
-        $pages = Page::where(['game' => $request['game'], 'subtitle' => $request['subtitle'], 'page' => $request['page_name']])->get();
+        $pages = Page::where(['game' => $request['game']]);
+        if ($request['section_name']) $pages = $pages->where(['subtitle' => $request['section_name']]);
+        else if ($request['page_name']) $pages = $pages->where(['subtitle' => $request['subtitle'], 'page' => $request['page_name']]);
+        else {
+            return response()->json([
+                'error' => 'section_name or page_name is required.',
+            ], 400);
+        } 
+
+        $pages = $pages->get();
         if (count($pages) > 0) {
             return response()->json([
-                'error' => 'Page already exists.',
+                'error' => 'Page/Section already exists.',
             ], 400);
         }
 
         $initSection = [0 => ['title' => 'Init', 'body' => ['type' => 'text', 'data' => 'Init']]];
-        Page::create(['game' => $request['game'], 'subtitle' => $request['subtitle'], 'page' => $request['page_name'], 'sections' => $initSection]);
+        if ($request['section_name']) Page::create(['game' => $request['game'], 'subtitle' => $request['section_name'], 'sections' => $initSection]);
+        else if ($request['page_name']) Page::create(['game' => $request['game'], 'subtitle' => $request['subtitle'], 'page' => $request['page_name'], 'sections' => $initSection]);
+        else {
+            return response()->json([
+                'error' => 'section_name or page_name is required.',
+            ], 400);
+        }
 
         $game = Game::where(['game' => $request['game']])->first();
         $sections = $game->sections;
-        foreach ($sections as $i => $section) {
-            if ($section['subtitle'] == $request['subtitle']) {
-                if (!isset($section['sections'])) $sections[$i]['sections'] = [];
-                $sections[$i]['sections'][] = $request['page_name'];
+        if ($request['section_name']) $sections[] = ['subtitle' => $request['section_name']];
+        else if ($request['page_name']) {
+            foreach ($sections as $i => $section) {
+                if ($section['subtitle'] == $request['subtitle']) {
+                    if (!isset($section['sections'])) $sections[$i]['sections'] = [];
+                    $sections[$i]['sections'][] = $request['page_name'];
+                }
             }
+        }
+        else {
+            return response()->json([
+                'error' => 'section_name or page_name is required.',
+            ], 400);
         }
         $game->sections = $sections;
         $game->save();

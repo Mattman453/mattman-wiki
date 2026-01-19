@@ -25,7 +25,6 @@
         e.preventDefault();
         error = '';
         success = '';
-        let fetchString = '';
         if (e.target.id.includes("section")) {
             if (!addingSection) {
                 addingSection = true;
@@ -35,7 +34,6 @@
                 }, 1);
                 return;
             }
-            fetchString = '/game/new_section';
         }
         else {
             if (!addingPage) {
@@ -46,12 +44,11 @@
                 }, 1);
                 return;
             }
-            fetchString = '/game/new_page';
         }
 
         let formData = new FormData(e.target);
         formData.append('game', otherProps.gameInfo.game);
-        fetch(fetchString, {
+        fetch('/game/new_page', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': otherProps.csrfToken,
@@ -63,12 +60,13 @@
                 switch (response.status) {
                     case 200:
                         addingSection = false;
-                        success = data.message;
+                        success = data.message + " Reloading...";
                         successTimeout = setTimeout(() => {
                             success = '';
                             router.reload();
+                            openNavigator = false;
                             successTimeout = null;
-                        }, 2000);
+                        }, 500);
                         break;
                     case 400:
                         error = data.error;
