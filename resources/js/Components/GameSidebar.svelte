@@ -96,8 +96,8 @@
 {#each otherProps.gameInfo.sections as section, index (section.subtitle)}
     <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}" bind:visible={visible[index]}>
         <div class="flex column" style="margin-left: 2em;">
-            {#each section.sections as subSection}
-                <a onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
+            {#each section.sections as page}
+                <a class="page-link" onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(page)}">{page}</a>
             {/each}
         </div>
         {#if addingPage}
@@ -137,7 +137,7 @@
 {/if}
 
 <style lang="scss">
-    a {
+    .page-link {
         text-decoration: none;
         color: black;
         padding: 5px 10px;

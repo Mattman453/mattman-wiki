@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Home Screen
+// Static Pages
 Route::get('/', 'App\Http\Controllers\MainController@homeView')->name('game.home');
+Route::get('/about', 'App\Http\Controllers\MainController@aboutView');
 
 // Authentication
 Route::prefix('/login')->group(function () {
@@ -19,7 +20,6 @@ Route::prefix('/verify')->group(function () {
 Route::post('/send-verification', 'App\Http\Controllers\AuthController@sendEmailVerification')->middleware('auth')->name('verification.send');
 
 // Standard Pages
-Route::get('/about', 'App\Http\Controllers\MainController@aboutView');
 Route::prefix('/game')->group(function () {
     Route::post('/new_page', 'App\Http\Controllers\PageController@createPage')->middleware(['verified']);
     Route::post('/edit/{game}/{subtitle?}/{page?}', 'App\Http\Controllers\PageController@updatePage')->middleware(['auth', 'verified']);

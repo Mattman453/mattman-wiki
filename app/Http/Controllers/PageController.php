@@ -150,7 +150,14 @@ class PageController extends Controller
         ]);
     }
 
-    public function createpage(Request $request) : JsonResponse {
+    /**
+     * Create a page with a new name and basic init sections. Should be sent as a POST request.
+     * 
+     * @param Request $request the request containing the new name in either 'section_name' or 'page_name'.
+     * @return JsonResponse the response either a 403 on authorization failure, 400 on missing information or
+     *      already existing page, or 200 on success. with an 'message' attribute for success and an 'error' otherwise
+     */
+    public function createPage(Request $request) : JsonResponse {
         if (Gate::denies('author')) return response()->json(['error' => 'You are not authorized to create new sections.'], 403);
 
         $pages = Page::where(['game' => $request['game']]);

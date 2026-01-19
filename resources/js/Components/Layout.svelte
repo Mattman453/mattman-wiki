@@ -13,7 +13,9 @@
     let transition = $state(false);
     let visibilityTimeout;
 
-    onDestroy(() => clearTimeout(visibilityTimeout));
+    onDestroy(() => {
+        clearTimeout(visibilityTimeout)
+    });
 
     function logoutHandler(e) {
         e.preventDefault();
@@ -91,7 +93,9 @@
     {#if otherProps.user}
         <form id="logout" onsubmit={logoutHandler}>
             <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
-                <div class="{$isMobile ? 'title-5' : 'title-4'}">Logout</div>
+                <div class="{$isMobile ? 'title-5' : 'title-4'}">
+                    Logout
+                </div>
             </button>
         </form>
     {:else}

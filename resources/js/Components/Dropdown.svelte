@@ -5,7 +5,7 @@
     let { title, children, link, visible = $bindable(), ...otherProps } = $props();
 </script>
 
-<div class="flex justify-content-space-between align-items-center holder" style="padding: 0.5em 2em;">
+<div class="flex justify-content-space-between align-items-center dropdown-header" style="padding: 0.5em 2em;">
     {#if link}
         <a use:inertia href={link}>{title}</a>
     {:else}
@@ -32,7 +32,7 @@
         }
     }
 
-    .holder {
+    .dropdown-header {
         flex: 1 6;
     }
 

@@ -112,37 +112,55 @@
             {error}
         </div>
     {/if}
-    <form id="register" onsubmit={submitHandler}>
+    <form id="login" onsubmit={submitHandler}>
         <div class="flex column" style="max-width: 250px; gap: 0.7em; margin: 0 2em;">
             <div class="flex column" style="gap: 5px;">
                 <label class="flex column" for="email">
-                    Enter your email:
+                    <div>
+                        Enter your email:
+                    </div>
                     <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
-                    <span>Email is not valid.</span>
+                    <span>
+                        Email is not valid.
+                    </span>
                 </label>
                 {#if !login}
                     <label class="flex column" for="emailConfirm" transition:slide={{duration: 300}}>
-                        Confirm your email:
+                        <div>
+                            Confirm your email:
+                        </div>
                         <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirm Email" required autocomplete="email">
-                        <span>Email is not valid.</span>
+                        <span>
+                            Email is not valid.
+                        </span>
                     </label>
                 {/if}
             </div>
             <div class="flex column" style="gap: 5px;">
                 <label class="flex column" for="password">
-                    Enter your password:
+                    <div>
+                        Enter your password:
+                    </div>
                     <input type="password" id="password" name="password" placeholder="Password" minlength="8" maxlength="30" required>
-                    <span>Password is not valid. Password must be between 8 and 30 characters.</span>
+                    <span>
+                        Password is not valid. Password must be between 8 and 30 characters.
+                    </span>
                 </label>
                 {#if !login}
                     <label class="flex column" for="passwordConfirm" transition:slide={{duration: 300}}>
-                        Confirm your password:
+                        <div>
+                            Confirm your password:
+                        </div>
                         <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" minlength="8" maxlength="30" required>
-                        <span>Password is not valid.</span>
+                        <span>
+                            Password is not valid.
+                        </span>
                     </label>
                 {/if}
             </div>
-            <button type="submit">{login ? "Login" : "Register"}</button>
+            <button type="submit">
+                {login ? "Login" : "Register"}
+            </button>
         </div>
     </form>
 </Layout>
@@ -185,7 +203,7 @@
         cursor: pointer;
     }
 
-    button.link {
+    .link {
         all: initial;
         background: none;
         border: none;
