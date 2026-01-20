@@ -84,12 +84,12 @@
             <div class="flex column" style="gap: 5px;">
                 <label class="flex column" for="email">
                     Enter your email:
-                    <input type="email" id="email" name="email" placeholder="Email" required>
+                    <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
                     <span>Email is not valid.</span>
                 </label>
                 <label class="flex column" for="emailConfirm">
                     Confirm your email:
-                    <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirm Email" required>
+                    <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirm Email" required autocomplete="email">
                     <span>Email is not valid.</span>
                 </label>
             </div>

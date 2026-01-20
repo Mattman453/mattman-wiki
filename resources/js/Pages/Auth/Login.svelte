@@ -63,12 +63,12 @@
             <div class="flex column" style="gap: 0.4em;">
                 <label class="flex column" for="email">
                     Enter your email:
-                    <input type="email" id="email" name="email" placeholder="Email" required>
+                    <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
                     <span>Email is not valid.</span>
                 </label>
                 <label class="flex column" for="password">
                     Enter your password:
-                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
                     <span>Password is not valid.</span>
                 </label>
             </div>
