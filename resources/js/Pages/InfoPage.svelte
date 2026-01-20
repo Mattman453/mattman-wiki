@@ -5,8 +5,9 @@
     import { inertia, router } from "@inertiajs/svelte";
 
     let { gameInfo, page, user, csrfToken, ...otherProps } = $props();
-    let successTimeout;
+    let successTimeout, errorTimeout;
     let message = $state('');
+    let error = $state('');
     let editing = $state(false);
     let sections = $state([]);
 
@@ -16,10 +17,13 @@
 
     onDestroy(() => {
         clearTimeout(successTimeout);
+        clearTimeout(errorTimeout);
     });
 
     function saveHandler(e) {
         e.preventDefault();
+        error = '';
+        message = '';
         let formData = new FormData(e.target);
 
         let newSections = [];
@@ -75,6 +79,13 @@
                         editing = false;
                         router.get(data.redirect);
                         break;
+                    case 400:
+                        error = data.error;
+                        errorTimeout = setTimeout(() => {
+                            error = '';
+                        }, 20000);
+                        window.scrollTo(0, 0);
+                        break;
                     default:
                         console.error(`Unexpected response status ${response.status} with messages:`);
                         console.error(data);
@@ -112,6 +123,9 @@
     <div class="flex column align-items-center">
         {#if message}
             <div class="title-2" style="color: green; max-width: 600px;">{message}</div>
+        {/if}
+        {#if error}
+            <div class="title-2" style="color: red; max-width: 600px;">{error}</div>
         {/if}
         {#if editing}
             <form id="save" onsubmit={saveHandler} class="form flex column justify-content-center align-items-center">

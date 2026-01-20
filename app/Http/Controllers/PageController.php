@@ -6,7 +6,6 @@ use App\Models\Game;
 use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class PageController extends Controller
@@ -41,15 +40,25 @@ class PageController extends Controller
         if ($request['page'] && $request['title'] != $request['page']) {
             $game = Game::where(['game' => $request['game']])->first();
             $sections = $game->sections;
+            $sectionIndex = -1;
+            $pageIndex = -1;
             foreach ($sections as $i => $section) {
                 if ($section['subtitle'] == $request['subtitle']) {
-                    foreach ($sections[$i]['sections'] as $j => &$section) {
-                        if ($section == $request['page']) {
-                            $sections[$i]['sections'][$j] = $request['title'];
-                            $game->sections = $sections;
-                            $game->save();
+                    $sectionIndex = $i;
+                    foreach ($sections[$i]['sections'] as $j => $subSection) {
+                        if ($subSection == $request['page']) {
+                            $pageIndex = $j;
+                        }
+                        if ($subSection == $request['title']) {
+                            return response()->json([
+                                'error' => 'Page name already exists. Body is updated but title is not.',
+                            ], 400);
                         }
                     }
+                    $sections[$sectionIndex]['sections'][$pageIndex] = $request['title'];
+                    $game->sections = $sections;
+                    $game->save();
+                    break;
                 }
             }
             $page->page = $request['title'];
@@ -62,14 +71,20 @@ class PageController extends Controller
         else if ($request['subtitle'] && $request['title'] != $request['subtitle']) {
             $game = Game::where(['game' => $request['game']])->first();
             $sections = $game->sections;
+            $sectionIndex = -1;
             foreach ($sections as $i => $section) {
                 if ($section['subtitle'] == $request['subtitle']) {
-                    $sections[$i]['subtitle'] = $request['title'];
-                    $game->sections = $sections;
-                    $game->save();
-                    break;
+                    $sectionIndex = $i;
+                }
+                if ($section['subtitle'] == $request['title']) {
+                    return response()->json([
+                        'error' => 'Page name already exists. Body is updated but title is not.',
+                    ], 400);
                 }
             }
+            $sections[$sectionIndex]['subtitle'] = $request['title'];
+            $game->sections = $sections;
+            $game->save();
             $changePages = Page::where(['game' => $request['game'], 'subtitle' => $request['subtitle']])->get();
             foreach ($changePages as $changePage) {
                 $changePage->subtitle = $request['title'];
