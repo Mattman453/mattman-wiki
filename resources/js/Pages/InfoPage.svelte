@@ -156,7 +156,7 @@
                 <div class="title-1">
                     {page.page ?? page.subtitle ?? page.game}
                 </div>
-                {#if user.roles?.includes("admin")}
+                {#if user?.roles?.includes("admin")}
                     <button onclick={() => editing = true} class="edit-button">
                         <i class="fa-solid fa-pencil"></i>
                         <div>Edit</div>
