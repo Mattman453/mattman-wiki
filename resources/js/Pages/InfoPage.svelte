@@ -67,7 +67,7 @@
                         message = data.message + 'Reloading...';
                         successTimeout = setTimeout(() => {
                             message = '';
-                            router.reload();
+                            window.location.href = window.location.href;
                             successTimeout = null;
                         }, 1000);
                         window.scrollTo(0, 0);
