@@ -1,5 +1,5 @@
 <script>
-    import { inertia } from "@inertiajs/svelte";
+    import { inertia, router } from "@inertiajs/svelte";
     import Layout from "../../Components/Layout.svelte";
 
     let { csrfToken, ...otherProps } = $props();
@@ -21,7 +21,7 @@
             response.json().then(data => {
                 switch(response.status) {
                     case 302:
-                        window.location.href = data.redirect;
+                        router.get(data.redirect);
                         break;
                     case 400:
                         document.getElementById('password').value = '';

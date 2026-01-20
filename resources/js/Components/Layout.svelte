@@ -1,5 +1,5 @@
 <script>
-    import { inertia } from "@inertiajs/svelte";
+    import { inertia, router } from "@inertiajs/svelte";
     import { isMobile } from "../stores";
     import { scale, slide } from "svelte/transition";
     import Dropdown from "./Dropdown.svelte";
@@ -27,7 +27,7 @@
             response.json().then(data => {
                 switch(response.status) {
                     case 302:
-                        window.location.href = data.redirect;
+                        router.get(data.redirect);
                         break;
                     default:
                         console.error(`Unexpected response status ${response.status} with messages:`);
@@ -64,9 +64,11 @@
     {:else}
         <div></div>
     {/if}
-    <div class="flex">
+    <div class="flex justify-content-center align-items-center">
         {#if otherProps.gameInfo?.image}
-            <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
+            <a use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}">
+                <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
+            </a>
         {/if}
         <a use:inertia href="/">
             <div class="{$isMobile ? 'title-3' : 'title-1'}">
@@ -110,7 +112,7 @@
 </div>
 
 
-<div style="margin: 2em;">
+<div style="margin: 1em 2em;">
     {@render children()}
 </div>
 

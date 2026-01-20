@@ -32,7 +32,7 @@ class Page extends Model
                     }
                     $newBody = new stdClass();
                     $newBody->type = 'text';
-                    $newBody->body = $body;
+                    $newBody->data = $body;
                     $section['body'] = $newBody;
                 }
             }

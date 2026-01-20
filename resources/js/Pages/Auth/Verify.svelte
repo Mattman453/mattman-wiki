@@ -1,6 +1,7 @@
 <script>
     import { onDestroy, onMount } from "svelte";
     import Layout from "../../Components/Layout.svelte";
+    import { router } from "@inertiajs/svelte";
 
     let { verificationSentAt, throttle, csrfToken, ...otherProps } = $props();
 
@@ -46,8 +47,7 @@
                         }, 5000);
                         break;
                     case 302:
-                        window.location.href = data.redirect;
-                        error = '';
+                        router.get(data.redirect);
                         break;
                     case 400:
                         error = data.error;

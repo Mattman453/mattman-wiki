@@ -1,5 +1,5 @@
 <script>
-    import { inertia } from "@inertiajs/svelte";
+    import { inertia, router } from "@inertiajs/svelte";
     import Layout from "../../Components/Layout.svelte";
 
     let { csrfToken, ...otherProps } = $props();
@@ -36,7 +36,7 @@
                         fetch('/verify');
                         break;
                     case 302:
-                        window.location.href = data.redirect;
+                        router.get(data.redirect);
                         break;
                     case 400:
                         error = data.error;
