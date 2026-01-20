@@ -2,7 +2,7 @@
     import { onDestroy, onMount } from "svelte";
     import Layout from "../Components/Layout.svelte";
     import { convertSpaceToUnderscore } from "../helper";
-    import { router } from "@inertiajs/svelte";
+    import { inertia, router } from "@inertiajs/svelte";
 
     let { gameInfo, page, user, csrfToken, ...otherProps } = $props();
     let successTimeout;
@@ -181,6 +181,41 @@
                     </div>
                 {/each}
             </div>
+            <hr>
+            <div class="flex align-items-center justify-content-center">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Page Links</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="flex justify-content-center align-items-center title-4">
+                                    <a use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}">{gameInfo.game}</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {#each gameInfo.sections as section}
+                            <tr>
+                                <td>
+                                    <div class="flex column justify-content-center align-items-center">
+                                        <div>
+                                            <a use:inertia class="title-4" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">{section.subtitle}</a>
+                                        </div>
+                                        <div class="flex" style="gap: 0.5em;">
+                                            {#each section.sections as subSection}
+                                                <a use:inertia class="title-6" style="margin: 0.1em 0;" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
+                                            {/each}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
         {/if}
     </div>
 </Layout>
@@ -227,5 +262,11 @@
         width: 80vw;
         height: fit-content;
         resize: vertical;
+    }
+
+    table, td, th {
+        border-collapse: collapse;
+        padding: 0.1em;
+        border: 1px solid black;
     }
 </style>
