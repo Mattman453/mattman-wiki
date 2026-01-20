@@ -3,18 +3,25 @@
     import { convertSpaceToUnderscore } from "../helper";
     import { isMobile, windowInnerWidth } from "../stores";
     import { onDestroy } from "svelte";
-    import { scale, slide } from "svelte/transition";
+    import { fade, scale, slide } from "svelte/transition";
 
-    let { children, Sidebar, ...otherProps } = $props();
+    let { children, Sidebar, lifetime, ...otherProps } = $props();
+    let currentLifetime = $derived(new Date(lifetime + 'Z'));
 
     let error = $state('');
+    let message = $state('');
     let openNavigator = $state(false);
     let visible = $state([]);
     let transition = $state(false);
+    let currentTime = $state(new Date().getTime())
+    let dateInterval = setInterval(() => currentTime = new Date().getTime(), 100);
     let visibilityTimeout;
+    let messageTimeout;
 
     onDestroy(() => {
-        clearTimeout(visibilityTimeout)
+        clearTimeout(visibilityTimeout);
+        clearInterval(dateInterval);
+        clearTimeout(messageTimeout);
     });
 
     function logoutHandler(e) {
@@ -47,6 +54,7 @@
         })
         .catch(exception => {
             console.error(exception);
+            error = "Page has expired. Please reload the page and try again.";
         });
     }
 
@@ -57,6 +65,41 @@
             openNavigator = !openNavigator;
             visibilityTimeout = null;
         }, 1);
+    }
+
+    function handleLifetimeUpdate() {
+        fetch('/update-lifetime', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': otherProps.csrfToken,
+            }
+        })
+        .then(response => {
+            response.json().then(data => {
+                switch (response.status) {
+                    case 200:
+                        message = 'Oh, There you are!';
+                        messageTimeout = setTimeout(() => {
+                            message = '';
+                            messageTimeout = null;
+                        }, 3000);
+                        lifetime = data.lifetime;
+                        break;
+                    default:
+                        console.error(`Unexpected response status ${response.status} with messages:`);
+                        console.error(data);
+                        break;
+                }
+            })
+            .catch(exception => {
+                console.error(exception);
+                error = "Page has expired. Please reload the page and try again.";
+            });
+        })
+        .catch(exception => {
+            console.error(exception);
+            error = "Page has expired. Please reload the page and try again.";
+        });
     }
 </script>
 
@@ -119,6 +162,42 @@
     {/if}
 </div>
 
+{#if (currentLifetime - currentTime) / 1000 <= 180}
+    <div class="flex justify-content-center" in:fade>
+        {#if (currentLifetime - currentTime) / 1000 > 0}
+            <button onclick={handleLifetimeUpdate} class="lifetime-notification-box" in:fade>
+                <div class="title-3">
+                    Are you still there?
+                </div>
+                <div class="title-5">
+                    If so, please click on this box to keep your session alive.
+                </div>
+                <div class="title-6">
+                    Session will expire in {parseInt((currentLifetime - currentTime) / 1000)} seconds
+                </div>
+            </button>
+        {:else}
+            <button class="lifetime-notification-box" onclick={() => window.location.href = window.location.href} in:fade>
+                <div class="title-3">
+                    Page has expired.
+                </div>
+                <div class="title-5">
+                    Please reload the page.
+                </div>
+            </button>
+        {/if}
+    </div>
+{/if}
+
+{#if message}
+    <div class="flex justify-content-center" out:fade>
+        <div class="lifetime-notification-box">
+            <div class="title-3">
+                {message}
+            </div>
+        </div>
+    </div>
+{/if}
 
 <div class="children-container">
     {@render children()}
@@ -138,6 +217,19 @@
 
 <style lang="scss">
     @use "../../css/variables";
+
+    .lifetime-notification-box {
+        border: 2px solid blue;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        background-color: white;
+        z-index: 2000;
+        position: fixed;
+        bottom: 5vh;
+        align-self: center;
+        justify-self: center;
+        padding: 1em;
+    }
 
     .children-container {
         margin: 1em 2em;

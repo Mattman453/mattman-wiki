@@ -26,6 +26,9 @@ Route::prefix('/game')->group(function () {
     Route::get('/{game}/{subtitle?}/{page?}', 'App\Http\Controllers\PageController@showStandardPage');
 });
 
+// Generic Post Requests
+Route::post('/update-lifetime', 'App\Http\Controllers\MainController@updateLifetime');
+
 // No Page Found
 Route::fallback(function () {
     $requestUri = request()->path();
