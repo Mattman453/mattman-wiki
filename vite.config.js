@@ -12,14 +12,12 @@ export default defineConfig({
         svelte(),
         compression({
             algorithms: [
-                defineAlgorithm('gzip', { level: 9}),
+                defineAlgorithm('gzip', { level: 9 }),
             ],
-            threshold: 0,
-            deleteOriginFile: false,
         }),
     ],
     build: {
-        minify: 'esbuild',
+        minify: 'terser',
     },
     server: {
         host: '127.0.0.1',
