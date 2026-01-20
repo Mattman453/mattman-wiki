@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { compression, defineAlgorithm } from 'vite-plugin-compression2';
 
 export default defineConfig({
     plugins: [
@@ -9,7 +10,17 @@ export default defineConfig({
             refresh: true,
         }),
         svelte(),
+        compression({
+            algorithms: [
+                defineAlgorithm('gzip', { level: 9}),
+            ],
+            threshold: 0,
+            deleteOriginFile: false,
+        }),
     ],
+    build: {
+        minify: 'esbuild',
+    },
     server: {
         host: '127.0.0.1',
         hmr: {
