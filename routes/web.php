@@ -14,3 +14,12 @@ Route::get('/verify', 'App\Http\Controllers\AuthController@getVerifyEmailView')-
 Route::post('/send-verification', 'App\Http\Controllers\AuthController@sendEmailVerification')->middleware('auth')->name('verification.send');
 Route::get('/game/{game}/{subtitle?}/{page?}', 'App\Http\Controllers\PageController@showStandardPage');
 Route::post('/game/edit/{game}/{subtitle?}/{page?}', 'App\Http\Controllers\PageController@updatePage')->middleware(['auth', 'verified']);
+
+Route::fallback(function () {
+    $requestUri = request()->path();
+    if (str_ends_with($requestUri, '.php')) {
+        $newUri = substr($requestUri, 0, -4);
+        return redirect($newUri);
+    }
+    return redirect(route('game.home'));
+});
