@@ -4,8 +4,17 @@
     import { isMobile, windowInnerWidth } from "../stores";
     import { onDestroy } from "svelte";
     import { fade, scale, slide } from "svelte/transition";
+    import GameSidebar from "./GameSidebar.svelte";
 
-    let { children, Sidebar, lifetime, ...otherProps } = $props();
+    let { 
+        children,
+        csrfToken,
+        gameInfo,
+        lifetime,
+        sidebar,
+        user,
+        ...otherProps
+    } = $props();
     let currentLifetime = $derived(new Date(lifetime + 'Z'));
 
     let error = $state('');
@@ -159,6 +168,7 @@
                         bind:visible
                         {gameInfo}
                         {user}
+                        {csrfToken}
                         {...otherProps}
                     />
                 {/if}

@@ -54,11 +54,11 @@
 
         @media screen and (max-width: variables.$mobileVW) {
             flex-direction: column;
+            margin: 1em;
         }
 
         .text {
             max-width: 600px;
-            margin: 0 1em;
 
             * {
                 margin: 0.5em 0;

@@ -4,10 +4,10 @@
     import { inertia, router } from "@inertiajs/svelte";
 
     let {
+        csrfToken,
         gameInfo,
         page,
         user,
-        csrfToken,
     } = $props();
 
     let successTimeout, errorTimeout;
