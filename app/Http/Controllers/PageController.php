@@ -113,45 +113,6 @@ class PageController extends Controller
     }
 
     /**
-     * Get the view for a standard page fetched from the database. Should be a GET request.
-     * 
-     * @param Request $request contains the uri components to specify game, subtitle, and page to be fetched.
-     * @return Response either an Error page if the game or page does not exist, or the requested page.
-     */
-    public function showStandardPage(Request $request) : Response {
-        $request['game'] = str_replace('_', ' ', $request['game']);
-        if ($request['subtitle'])$request['subtitle'] = str_replace('_', ' ', $request['subtitle']);
-        if ($request['page']) $request['page'] = str_replace('_', ' ', $request['page']);
-
-        $game = Game::select(['game', 'image', 'sections'])->where(['game' => $request['game']])->get();
-        if (!isset($game[0])) {
-            return Inertia::render('Error', [
-                'missingGame' => $request['game'],
-            ]);
-        }
-
-        $databaseRequest = Page::where(['game' => $request['game']]);
-        $request['subtitle'] ?
-            $databaseRequest = $databaseRequest->where(['subtitle' => $request['subtitle']]) :
-            $databaseRequest = $databaseRequest->where(['subtitle' => ['$exists' => false]]);
-        $request['page'] ?
-            $databaseRequest = $databaseRequest->where(['page' => $request['page']]) :
-            $databaseRequest = $databaseRequest->where(['page' => ['$exists' => false]]);
-        $page = $databaseRequest->get();
-
-        if (!isset($page[0])) {
-            return Inertia::render('Error', [
-                'missingPage' => $request['game'] . '/' . $request['subtitle'] . '/' . $request['page'],
-            ]);
-        }
-        return Inertia::render('InfoPage', [
-            'gameInfo' => $game[0],
-            'sidebar' => true,
-            'page' => $page[0],
-        ]);
-    }
-
-    /**
      * Create a page with a new name and basic init sections. Should be sent as a POST request.
      * 
      * @param Request $request the request containing the new name in either 'section_name' or 'page_name'.
@@ -192,5 +153,44 @@ class PageController extends Controller
         return response()->json([
             'message' => 'Page created.',
         ], 200);
+    }
+
+    /**
+     * Get the view for a standard page fetched from the database. Should be a GET request.
+     * 
+     * @param Request $request contains the uri components to specify game, subtitle, and page to be fetched.
+     * @return Response either an Error page if the game or page does not exist, or the requested page.
+     */
+    public function showStandardPage(Request $request) : Response {
+        $request['game'] = str_replace('_', ' ', $request['game']);
+        if ($request['subtitle'])$request['subtitle'] = str_replace('_', ' ', $request['subtitle']);
+        if ($request['page']) $request['page'] = str_replace('_', ' ', $request['page']);
+
+        $game = Game::select(['game', 'image', 'sections'])->where(['game' => $request['game']])->get();
+        if (!isset($game[0])) {
+            return Inertia::render('Error', [
+                'missingGame' => $request['game'],
+            ]);
+        }
+
+        $databaseRequest = Page::where(['game' => $request['game']]);
+        $request['subtitle'] ?
+            $databaseRequest = $databaseRequest->where(['subtitle' => $request['subtitle']]) :
+            $databaseRequest = $databaseRequest->where(['subtitle' => ['$exists' => false]]);
+        $request['page'] ?
+            $databaseRequest = $databaseRequest->where(['page' => $request['page']]) :
+            $databaseRequest = $databaseRequest->where(['page' => ['$exists' => false]]);
+        $page = $databaseRequest->get();
+
+        if (!isset($page[0])) {
+            return Inertia::render('Error', [
+                'missingPage' => $request['game'] . '/' . $request['subtitle'] . '/' . $request['page'],
+            ]);
+        }
+        return Inertia::render('InfoPage', [
+            'gameInfo' => $game[0],
+            'sidebar' => true,
+            'page' => $page[0],
+        ]);
     }
 }
