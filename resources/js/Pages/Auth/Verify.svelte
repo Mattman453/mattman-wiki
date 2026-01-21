@@ -44,6 +44,7 @@
                         message = data.success;
                         messageTimeout = setTimeout(() => {
                             message = '';
+                            messageTimeout = null;
                         }, 5000);
                         break;
                     case 302:

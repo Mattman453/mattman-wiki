@@ -67,6 +67,7 @@
                         message = data.message;
                         successTimeout = setTimeout(() => {
                             message = '';
+                            successTimeout = null;
                         }, 10000);
                         window.scrollTo(0, 0);
                         editing = false;
@@ -75,6 +76,7 @@
                         message = data.message;
                         successTimeout = setTimeout(() => {
                             message = '';
+                            successTimeout = null;
                         }, 10000);
                         window.scrollTo(0, 0);
                         editing = false;
@@ -84,6 +86,7 @@
                         error = data.error;
                         errorTimeout = setTimeout(() => {
                             error = '';
+                            errorTimeout = null;
                         }, 20000);
                         window.scrollTo(0, 0);
                         break;
