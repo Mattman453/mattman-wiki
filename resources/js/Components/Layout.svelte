@@ -1,15 +1,21 @@
 <script>
     import { inertia, router } from "@inertiajs/svelte";
-    import { isMobile } from "../stores";
-    import { scale, slide } from "svelte/transition";
     import { convertSpaceToUnderscore } from "../helper";
+    import { isMobile } from "../stores";
+    import { onDestroy } from "svelte";
+    import { scale, slide } from "svelte/transition";
 
     let { children, Sidebar, ...otherProps } = $props();
 
     let error = $state('');
     let openNavigator = $state(false);
+    let visible = $state(false);
     let transition = $state(false);
+    let visibilityTimeout;
 
+    onDestroy(() => {
+        clearTimeout(visibilityTimeout);
+    });
 
     function logoutHandler(e) {
         e.preventDefault();
@@ -43,6 +49,15 @@
             console.error(exception);
         });
     }
+
+    function changeSidebarVisibility() {
+        visible = false;
+        transition = true;
+        visibilityTimeout = setTimeout(() => {
+            openNavigator = !openNavigator;
+            visibilityTimeout = null;
+        }, 1);
+    }
 </script>
 
 <svelte:head>
@@ -53,7 +68,7 @@
 <div class="header flex align-items-center justify-content-space-between">
     {#if Sidebar}
         <!-- svelte-ignore a11y_consider_explicit_label -->
-        <button onclick={() => {transition = true; openNavigator = !openNavigator;}} style="all: unset; cursor: pointer; z-index: 9999;">
+        <button onclick={changeSidebarVisibility} style="all: unset; cursor: pointer; z-index: 9999;">
             {#if !openNavigator && transition == false}
                 <i class="fa-solid fa-bars" transition:scale={{duration: 150, opacity: 1}} onoutroend={() => transition = false}></i>
             {:else if openNavigator && transition == false}
@@ -93,12 +108,12 @@
     {#if openNavigator}
         <div class="menu flex column" transition:slide={{axis: 'x'}}>
             <div>
-                <Sidebar bind:openNavigator={openNavigator} {...otherProps} />
+                <Sidebar bind:openNavigator bind:visible {...otherProps} />
             </div>
         </div>
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="background" transition:slide={{axis: 'x'}} onclick={() => {transition = true; openNavigator = false}}></div>
+        <div class="background" transition:slide={{axis: 'x'}} onclick={changeSidebarVisibility}></div>
     {/if}
 </div>
 
