@@ -146,6 +146,7 @@ class PageController extends Controller
         }
         return Inertia::render('InfoPage', [
             'gameInfo' => $game[0],
+            'sidebar' => true,
             'page' => $page[0],
         ]);
     }

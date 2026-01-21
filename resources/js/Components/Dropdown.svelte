@@ -2,7 +2,12 @@
     import { inertia } from "@inertiajs/svelte";
     import { slide } from "svelte/transition";
 
-    let { title, children, link, visible = $bindable(), ...otherProps } = $props();
+    let {
+        title,
+        link,
+        visible = $bindable(),
+        children,
+    } = $props();
 </script>
 
 <div class="flex justify-content-space-between align-items-center dropdown-header" style="padding: 0.5em 2em;">

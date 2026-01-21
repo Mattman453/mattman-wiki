@@ -4,7 +4,13 @@
     import { convertSpaceToUnderscore } from "../helper";
     import { onDestroy, onMount } from "svelte";
 
-    let { openNavigator = $bindable(false), visible = $bindable([]), user, ...otherProps } = $props();
+    let { 
+        openNavigator = $bindable(false), 
+        visible = $bindable([]), 
+        user,
+        gameInfo,
+        csrfToken,
+    } = $props();
 
     let addingSection = $state(false);
     let addingPage = $state(false);
@@ -14,7 +20,7 @@
     let focusTimeout, successTimeout, errorTimeout;
 
     onMount(() => {
-        for (let i = 0; i < otherProps.gameInfo.sections.length; i++) visible[i] = false;
+        for (let i = 0; i < gameInfo.sections.length; i++) visible[i] = false;
     });
 
     onDestroy(() => {
@@ -47,11 +53,11 @@
         }
 
         let formData = new FormData(e.target);
-        formData.append('game', otherProps.gameInfo.game);
+        formData.append('game', gameInfo.game);
         fetch('/game/new_page', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': otherProps.csrfToken,
+                'X-CSRF-TOKEN': csrfToken,
             },
             body: formData,
         })
@@ -93,11 +99,11 @@
     }
 </script>
 
-{#each otherProps.gameInfo.sections as section, index (section.subtitle)}
-    <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}" bind:visible={visible[index]}>
+{#each gameInfo.sections as section, index (section.subtitle)}
+    <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}" bind:visible={visible[index]}>
         <div class="flex column" style="margin-left: 2em;">
             {#each section.sections as page}
-                <a class="page-link" onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(page)}">{page}</a>
+                <a class="page-link" onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(page)}">{page}</a>
             {/each}
         </div>
         {#if user?.roles?.includes("admin") || user?.roles?.includes("author")}

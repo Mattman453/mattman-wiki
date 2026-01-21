@@ -11,6 +11,25 @@ div {
     white-space: pre-line;
 }
 
+input, textarea {
+    font-size: 16px;
+    padding: 0.3em;
+    border-radius: 0.5em;
+    border: 1px solid black;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+label:has(input:user-invalid) {
+    input {
+        border-color: red;
+    }
+
+    span {
+        color: red;
+        display: block;
+    }
+}
+
 .flex {
     display: flex;
 
@@ -66,4 +85,8 @@ div {
 
 .title-6 {
     font-size: 14px;
+}
+
+.box-shadow {
+    box-shadow: 0 1px 30px rgba(0, 0, 0, 0.2);
 }
