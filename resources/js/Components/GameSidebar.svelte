@@ -4,7 +4,13 @@
     import { convertSpaceToUnderscore } from "../helper";
     import { onDestroy, onMount } from "svelte";
 
-    let { openNavigator = $bindable(false), visible = $bindable([]), user, ...otherProps } = $props();
+    let { 
+        csrfToken,
+        gameInfo,
+        openNavigator = $bindable(false), 
+        visible = $bindable([]), 
+        user,
+    } = $props();
 
     let addingSection = $state(false);
     let addingPage = $state(false);
@@ -14,7 +20,7 @@
     let focusTimeout, successTimeout, errorTimeout;
 
     onMount(() => {
-        for (let i = 0; i < otherProps.gameInfo.sections.length; i++) visible[i] = false;
+        for (let i = 0; i < gameInfo.sections.length; i++) visible[i] = false;
     });
 
     onDestroy(() => {
@@ -47,11 +53,11 @@
         }
 
         let formData = new FormData(e.target);
-        formData.append('game', otherProps.gameInfo.game);
+        formData.append('game', gameInfo.game);
         fetch('/game/new_page', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': otherProps.csrfToken,
+                'X-CSRF-TOKEN': csrfToken,
             },
             body: formData,
         })
@@ -93,29 +99,31 @@
     }
 </script>
 
-{#each otherProps.gameInfo.sections as section, index (section.subtitle)}
-    <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}" bind:visible={visible[index]}>
-        <div class="flex column" style="margin-left: 2em;">
-            {#each section.sections as page}
-                <a class="page-link" onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(page)}">{page}</a>
-            {/each}
-        </div>
-        {#if user?.roles?.includes("admin") || user?.roles?.includes("author")}
-            {#if addingPage}
-                <form id="new_page_form" class="flex new-page-form align-items-center" onsubmit={newPageHandler}>
-                    <input type="hidden" id="subtitle" name="subtitle" value={section.subtitle}>
-                    <input type="text" id="page_name" name="page_name" placeholder="Page Name" class="page-name" minlength="1" required>
-                    <button type="submit" class="page-button">Submit</button>
-                </form>
-            {:else}
-                <button id="new_page_button_{index}" class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
-                    [+] New Page
-                </button>
+<div class="sidebar-container">
+    {#each gameInfo.sections as section, index (section.subtitle)}
+        <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}" bind:openNavigator bind:visible={visible[index]}>
+            <div class="flex column" style="margin-left: 2em;">
+                {#each section.sections as page}
+                    <a class="page-link" onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(page)}">{page}</a>
+                {/each}
+            </div>
+            {#if user?.roles?.includes("admin") || user?.roles?.includes("author")}
+                {#if addingPage}
+                    <form id="new_page_form" class="flex new-page-form align-items-center" onsubmit={newPageHandler}>
+                        <input type="hidden" id="subtitle" name="subtitle" value={section.subtitle}>
+                        <input type="text" id="page_name" name="page_name" placeholder="Page Name" class="page-name" minlength="1" required>
+                        <button type="submit" class="page-button">Submit</button>
+                    </form>
+                {:else}
+                    <button id="new_page_button_{index}" class="new-page-button" style="margin: 5px 2.5em; {addingPage ? 'cursor: text;' : 'cursor: pointer;'}" onclick={newPageHandler}>
+                        [+] New Page
+                    </button>
+                {/if}
             {/if}
-        {/if}
-    </Dropdown>
-    <hr>
-{/each}
+        </Dropdown>
+        <hr>
+    {/each}
+</div>
 
 {#if user?.roles?.includes("admin") || user?.roles?.includes("author")}
     {#if addingSection}
@@ -139,6 +147,10 @@
 {/if}
 
 <style lang="scss">
+    .sidebar-container {
+        max-width: 100vw;
+    }
+
     .page-link {
         text-decoration: none;
         color: black;

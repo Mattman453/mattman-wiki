@@ -1,11 +1,15 @@
 <script>
     import { onDestroy, onMount } from "svelte";
-    import Layout from "../Components/Layout.svelte";
     import { convertSpaceToUnderscore } from "../helper";
     import { inertia, router } from "@inertiajs/svelte";
-    import GameSidebar from "../Components/GameSidebar.svelte";
 
-    let { gameInfo, page, user, csrfToken, ...otherProps } = $props();
+    let {
+        csrfToken,
+        gameInfo,
+        page,
+        user,
+    } = $props();
+
     let successTimeout, errorTimeout;
     let message = $state('');
     let error = $state('');
@@ -126,122 +130,122 @@
     }
 </script>
 
-<Layout {gameInfo} {user} {csrfToken} {...otherProps} Sidebar={GameSidebar}>
-    <div class="flex column align-items-center">
-        {#if message}
-            <div class="title-2" style="color: green; max-width: 600px;">{message}</div>
-        {/if}
-        {#if error}
-            <div class="title-2" style="color: red; max-width: 600px;">{error}</div>
-        {/if}
-        {#if editing}
-            <form id="save" onsubmit={saveHandler} class="form flex column justify-content-center align-items-center">
-                <div>
-                    <label for="title">Title: </label>
-                    <input type="text" id="title" name="title" defaultValue="{page.page ?? page.subtitle ?? page.game}" disabled={!page.subtitle && !page.page}>
-                </div>
-                <hr>
-                <div class="flex column">
-                    {#each sections as section, index}
-                        {#if section.title != page.sections[0].title}
-                            <hr>
-                            <button id="remove_{index}_section" name="remove_{index}_section" type="button" onclick={sectionHandler}>
-                                <i class="fa-solid fa-minus"></i>
-                                Remove Section {index + 1}
-                            </button>
-                        {/if}
-                        <div class="flex column">
-                            <div class="title-1">
-                                <label for="section_{index}_title">Section {index + 1} Title: </label>
-                                <input style="width: 65%; min-width: 250px;" type="text" id="section_{index}_title" name="section_{index}_title" defaultValue="{section.title}">
-                            </div>
-                            {#if section.body.type == "text"}
-                                <div class="title-6">
-                                    <label for="section_{index}_body">Section {index + 1} Body: </label>
-                                    <textarea rows="7" id="section_{index}_body" name="section_{index}_body" defaultValue="{section.body.data}"></textarea>
-                                </div>
-                            {/if}
-                        </div>
-                    {/each}
-                    <button id="add_section" name="add_section" type="button" onclick={sectionHandler}>
-                        <i class="fa-solid fa-plus"></i>
-                        Add Section
-                    </button>
-                </div>
-                <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
-                    Save
-                </button>
-            </form>
-        {:else}
-            <div class="flex justify-content-center align-items-center">
-                <div class="title-1">
-                    {page.page ?? page.subtitle ?? page.game}
-                </div>
-                {#if user?.roles?.includes("admin")}
-                    <button onclick={() => editing = true} class="edit-button">
-                        <i class="fa-solid fa-pencil"></i>
-                        <div>Edit</div>
-                    </button>
-                {/if}
+<div class="flex column align-items-center">
+    {#if message}
+        <div class="title-2" style="color: green; max-width: 600px;">{message}</div>
+    {/if}
+    {#if error}
+        <div class="title-2" style="color: red; max-width: 600px;">{error}</div>
+    {/if}
+    {#if editing}
+        <form id="save" onsubmit={saveHandler} class="form flex column justify-content-center align-items-center">
+            <div>
+                <label for="title">Title: </label>
+                <input type="text" id="title" name="title" defaultValue="{page.page ?? page.subtitle ?? page.game}" disabled={!page.subtitle && !page.page}>
             </div>
             <hr>
-            <div class="flex column" style="max-width: 1200px;">
-                {#each page.sections as section}
+            <div class="flex column">
+                {#each sections as section, index}
                     {#if section.title != page.sections[0].title}
                         <hr>
+                        <button id="remove_{index}_section" name="remove_{index}_section" type="button" onclick={sectionHandler}>
+                            <i class="fa-solid fa-minus"></i>
+                            Remove Section {index + 1}
+                        </button>
                     {/if}
                     <div class="flex column">
                         <div class="title-1">
-                            {section.title}
+                            <label for="section_{index}_title">Section {index + 1} Title: </label>
+                            <input style="width: 65%; min-width: 250px;" type="text" id="section_{index}_title" name="section_{index}_title" defaultValue="{section.title}">
                         </div>
                         {#if section.body.type == "text"}
                             <div class="title-6">
-                                {section.body.data}
+                                <label for="section_{index}_body">Section {index + 1} Body: </label>
+                                <textarea rows="7" id="section_{index}_body" name="section_{index}_body" defaultValue="{section.body.data}"></textarea>
                             </div>
                         {/if}
                     </div>
                 {/each}
+                <button id="add_section" name="add_section" type="button" onclick={sectionHandler}>
+                    <i class="fa-solid fa-plus"></i>
+                    Add Section
+                </button>
             </div>
-            <hr>
-            <div class="flex align-items-center justify-content-center" style="max-width: 95vw;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Page Links</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
+                Save
+            </button>
+        </form>
+    {:else}
+        <div class="flex justify-content-center align-items-center">
+            <div class="title-1">
+                {page.page ?? page.subtitle ?? page.game}
+            </div>
+            {#if user?.roles?.includes("admin")}
+                <button onclick={() => editing = true} class="edit-button">
+                    <i class="fa-solid fa-pencil"></i>
+                    <div>Edit</div>
+                </button>
+            {/if}
+        </div>
+        <hr>
+        <div class="flex column" style="max-width: 1200px;">
+            {#each page.sections as section}
+                {#if section.title != page.sections[0].title}
+                    <hr>
+                {/if}
+                <div class="flex column">
+                    <div class="title-1">
+                        {section.title}
+                    </div>
+                    {#if section.body.type == "text"}
+                        <div class="title-6">
+                            {section.body.data}
+                        </div>
+                    {/if}
+                </div>
+            {/each}
+        </div>
+        <hr>
+        <div class="flex align-items-center justify-content-center" style="max-width: 95vw;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Page Links</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="flex justify-content-center align-items-center title-4">
+                                <a use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}">{gameInfo.game}</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {#each gameInfo.sections as section}
                         <tr>
                             <td>
-                                <div class="flex justify-content-center align-items-center title-4">
-                                    <a use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}">{gameInfo.game}</a>
+                                <div class="flex column justify-content-center align-items-center">
+                                    <div>
+                                        <a use:inertia class="title-4" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">{section.subtitle}</a>
+                                    </div>
+                                    <div class="flex flex-wrap justify-content-center align-items-center" style="gap: 0.5em;">
+                                        {#each section.sections as subSection}
+                                            <a use:inertia class="title-6" style="margin: 0.1em 0;" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
+                                        {/each}
+                                    </div>
                                 </div>
                             </td>
                         </tr>
-                        {#each gameInfo.sections as section}
-                            <tr>
-                                <td>
-                                    <div class="flex column justify-content-center align-items-center">
-                                        <div>
-                                            <a use:inertia class="title-4" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">{section.subtitle}</a>
-                                        </div>
-                                        <div class="flex flex-wrap justify-content-center align-items-center" style="gap: 0.5em;">
-                                            {#each section.sections as subSection}
-                                                <a use:inertia class="title-6" style="margin: 0.1em 0;" use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
-                                            {/each}
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            </div>
-        {/if}
-    </div>
-</Layout>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    {/if}
+</div>
 
 <style lang="scss">
+    @use "../../css/variables";
+
     .title-1 {
         margin: 0.5em 1em;
     }
@@ -279,10 +283,14 @@
     }
 
     textarea {
-        font-size: 14px;
         width: 80vw;
         height: fit-content;
         resize: vertical;
+
+        @media screen and (max-width: variables.$mobileVW) {
+            width: 600px;
+            max-width: 90vw;
+        }
     }
 
     table, td, th {

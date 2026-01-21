@@ -4,8 +4,17 @@
     import { isMobile, windowInnerWidth } from "../stores";
     import { onDestroy } from "svelte";
     import { fade, scale, slide } from "svelte/transition";
+    import GameSidebar from "./GameSidebar.svelte";
 
-    let { children, Sidebar, lifetime, ...otherProps } = $props();
+    let { 
+        children,
+        csrfToken,
+        gameInfo,
+        lifetime,
+        sidebar,
+        user,
+        ...otherProps
+    } = $props();
     let currentLifetime = $derived(new Date(lifetime + 'Z'));
 
     let error = $state('');
@@ -31,7 +40,7 @@
         fetch('/logout', {
             method: 'POST',
             headers: {
-                "X-CSRF-TOKEN": otherProps.csrfToken,
+                "X-CSRF-TOKEN": csrfToken,
             },
             body: formData,
         })
@@ -108,8 +117,8 @@
     <script src="https://kit.fontawesome.com/0cdd07cc84.js" crossorigin="anonymous"></script>
 </svelte:head>
 
-<div class="header flex align-items-center justify-content-space-between">
-    {#if Sidebar}
+<div class="header box-shadow flex align-items-center justify-content-space-between">
+    {#if sidebar}
         <!-- svelte-ignore a11y_consider_explicit_label -->
         <button onclick={changeSidebarVisibility} style="all: unset; cursor: pointer; z-index: 9999;">
             {#if !openNavigator && transition == false}
@@ -122,9 +131,9 @@
         <div></div>
     {/if}
     <div class="flex justify-content-center align-items-center">
-        {#if otherProps.gameInfo?.image && $windowInnerWidth > 600}
-            <a use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}">
-                <img class="game-logo" src="{otherProps.gameInfo.image}" alt="{otherProps.gameInfo.title ?? "game"} logo">
+        {#if gameInfo?.image && $windowInnerWidth > 600}
+            <a use:inertia href="/game/{convertSpaceToUnderscore(gameInfo.game)}">
+                <img class="game-logo" src="{gameInfo.image}" alt="{gameInfo.title ?? "game"} logo">
             </a>
         {/if}
         <a use:inertia href="/">
@@ -133,7 +142,7 @@
             </div>
         </a>
     </div>
-    {#if otherProps.user}
+    {#if user}
         <form id="logout" onsubmit={logoutHandler}>
             <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
                 <div class="{$isMobile ? 'title-5' : 'title-4'}">
@@ -153,7 +162,16 @@
     {#if openNavigator}
         <div class="menu flex column" transition:slide={{axis: 'x'}}>
             <div>
-                <Sidebar bind:openNavigator bind:visible {...otherProps} />
+                {#if gameInfo}
+                    <GameSidebar 
+                        bind:openNavigator
+                        bind:visible
+                        {gameInfo}
+                        {user}
+                        {csrfToken}
+                        {...otherProps}
+                    />
+                {/if}
             </div>
         </div>
         <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -235,7 +253,7 @@
         margin: 1em 2em;
 
         @media screen and (max-width: variables.$mobileVW) {
-            margin: 0;
+            margin: 0.5em 1em;
         }
     }
 
@@ -247,7 +265,6 @@
     .header {
         position: sticky;
         top: 0;
-        box-shadow: 0 4px 60px rgba(0, 0, 0, 0.2);
         height: 3em;
         z-index: 999;
         background-color: white;

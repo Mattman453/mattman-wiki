@@ -1,10 +1,12 @@
 <script>
     import { router } from "@inertiajs/svelte";
-    import Layout from "../../Components/Layout.svelte";
     import { slide } from "svelte/transition";
     import { onDestroy } from "svelte";
 
-    let { csrfToken, login = true, ...otherProps } = $props();
+    let {
+        csrfToken,
+        login = true,
+    } = $props();
 
     let error = $state('');
     let errorTimeout;
@@ -84,113 +86,93 @@
     }
 </script>
 
-<Layout {...otherProps}>
-    {#if login}
-        <div class="flex column" style="gap: 0.3em; margin: 0 2em 1em;" transition:slide={{duration: 300}}>
-            <div class="title-2">
-                Welcome to the login page.
-            </div>
-            <div class="title-5">
-                Don't have an account? Click <button class="title-5 link" onclick={changeRegisterOrLogin}>here</button> to create a new account.
-            </div>
+{#if login}
+    <div class="flex column" style="gap: 0.3em; margin: 0 2em 1em;" transition:slide={{duration: 300}}>
+        <div class="title-2">
+            Welcome to the login page.
         </div>
-    {:else}
-        <div class="flex column" style="gap: 0.3em; margin: 0 2em 1em;" transition:slide={{duration: 300}}>
-            <div class="title-2">
-                Welcome to the registration page. You only need an account if you plan to edit or work on any pages.
-            </div>
-            <div class="title-3">
-                You do not require an account to view any information on this website.
-            </div>
-            <div class="title-5">
-                Already have an account? Click <button class="title-5 link" onclick={changeRegisterOrLogin}>here</button> to log in with your existing credentials.
-            </div>
+        <div class="title-5">
+            Don't have an account? Click <button class="title-5 link" onclick={changeRegisterOrLogin}>here</button> to create a new account.
         </div>
-    {/if}
-    {#if error}
-        <div style="color: red; font-size: 14px; margin-bottom: 10px; margin-left: 2em;">
-            {error}
+    </div>
+{:else}
+    <div class="flex column" style="gap: 0.3em; margin: 0 2em 1em;" transition:slide={{duration: 300}}>
+        <div class="title-2">
+            Welcome to the registration page. You only need an account if you plan to edit or work on any pages.
         </div>
-    {/if}
-    <form id="login" onsubmit={submitHandler}>
-        <div class="flex column" style="max-width: 250px; gap: 0.7em; margin: 0 2em;">
-            <div class="flex column" style="gap: 5px;">
-                <label class="flex column" for="email">
+        <div class="title-3">
+            You do not require an account to view any information on this website.
+        </div>
+        <div class="title-5">
+            Already have an account? Click <button class="title-5 link" onclick={changeRegisterOrLogin}>here</button> to log in with your existing credentials.
+        </div>
+    </div>
+{/if}
+{#if error}
+    <div style="color: red; font-size: 14px; margin-bottom: 10px; margin-left: 2em;">
+        {error}
+    </div>
+{/if}
+<form id="login" onsubmit={submitHandler}>
+    <div class="flex column" style="max-width: 250px; gap: 0.7em; margin: 0 2em;">
+        <div class="flex column" style="gap: 5px;">
+            <label class="flex column" for="email">
+                <div>
+                    Enter your email:
+                </div>
+                <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
+                <span>
+                    Email is not valid.
+                </span>
+            </label>
+            {#if !login}
+                <label class="flex column" for="emailConfirm" transition:slide={{duration: 300}}>
                     <div>
-                        Enter your email:
+                        Confirm your email:
                     </div>
-                    <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
+                    <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirm Email" required autocomplete="email">
                     <span>
                         Email is not valid.
                     </span>
                 </label>
-                {#if !login}
-                    <label class="flex column" for="emailConfirm" transition:slide={{duration: 300}}>
-                        <div>
-                            Confirm your email:
-                        </div>
-                        <input type="email" id="emailConfirm" name="emailConfirm" placeholder="Confirm Email" required autocomplete="email">
-                        <span>
-                            Email is not valid.
-                        </span>
-                    </label>
-                {/if}
-            </div>
-            <div class="flex column" style="gap: 5px;">
-                <label class="flex column" for="password">
+            {/if}
+        </div>
+        <div class="flex column" style="gap: 5px;">
+            <label class="flex column" for="password">
+                <div>
+                    Enter your password:
+                </div>
+                <input type="password" id="password" name="password" placeholder="Password" minlength="8" maxlength="30" required>
+                <span>
+                    Password is not valid. Password must be between 8 and 30 characters.
+                </span>
+            </label>
+            {#if !login}
+                <label class="flex column" for="passwordConfirm" transition:slide={{duration: 300}}>
                     <div>
-                        Enter your password:
+                        Confirm your password:
                     </div>
-                    <input type="password" id="password" name="password" placeholder="Password" minlength="8" maxlength="30" required>
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" minlength="8" maxlength="30" required>
                     <span>
-                        Password is not valid. Password must be between 8 and 30 characters.
+                        Password is not valid.
                     </span>
                 </label>
-                {#if !login}
-                    <label class="flex column" for="passwordConfirm" transition:slide={{duration: 300}}>
-                        <div>
-                            Confirm your password:
-                        </div>
-                        <input type="password" id="passwordConfirm" name="passwordConfirm" placeholder="Confirm Password" minlength="8" maxlength="30" required>
-                        <span>
-                            Password is not valid.
-                        </span>
-                    </label>
-                {/if}
-            </div>
-            <button type="submit">
-                {login ? "Login" : "Register"}
-            </button>
+            {/if}
         </div>
-    </form>
-</Layout>
+        <button type="submit">
+            {login ? "Login" : "Register"}
+        </button>
+    </div>
+</form>
 
 <style lang="scss">
     label {
         font-size: 16px;
     }
 
-    input {
-        font-size: 16px;
-        padding: 0.3em;
-        border-radius: 0.5em;
-        border: 1px solid black;
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
     span {
         color: red;
         display: none;
-    }
-    
-    label:has(input:user-invalid) {
-        input {
-            border-color: red;
-        }
-
-        span {
-            display: block;
-        }
     }
 
     button {

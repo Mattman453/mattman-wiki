@@ -2,18 +2,25 @@
     import { inertia } from "@inertiajs/svelte";
     import { slide } from "svelte/transition";
 
-    let { title, children, link, visible = $bindable(), ...otherProps } = $props();
+    let {
+        children,
+        link,
+        openNavigator = $bindable(false),
+        title,
+        visible = $bindable(),
+    } = $props();
 </script>
 
-<div class="flex justify-content-space-between align-items-center dropdown-header" style="padding: 0.5em 2em;">
+<div class="flex justify-content-space-between dropdown-header">
     {#if link}
-        <a use:inertia href={link}>{title}</a>
+        <a use:inertia href={link} onclick={() => openNavigator = false}>{title}</a>
     {:else}
         <div>{title}</div>
     {/if}
     <!-- svelte-ignore a11y_consider_explicit_label -->
-    <button class="flex" style="justify-content: right; width: 100%;" onclick={() => visible = !visible}>
-        <i class="fa-solid fa-chevron-down" class:rotate={!visible}></i>
+    <button class="flex" style="justify-content: right; width: 100%; align-items: center;" onclick={() => visible = !visible}>
+        <i class="fa-solid fa-chevron-down" class:hide={!visible}></i>
+        <i class="fa-solid fa-chevron-right" class:hide={visible}></i>
     </button>
 </div>
 
@@ -24,22 +31,23 @@
 {/if}
 
 <style lang="scss">
-    .fa-chevron-down {
-        transition: transform 0.3s ease;
-
-        &.rotate {
-            transform: rotate(-90deg);
-        }
-    }
+    @use "../../css/variables";
 
     .dropdown-header {
-        flex: 1 6;
+        padding: 0.5em 2em;
+        align-items: stretch;
+
+        @media screen and (max-width: variables.$mobileVW) {
+            padding: 0.5em 1em;
+        }
     }
 
     button {
         border: none;
         background-color: white;
         cursor: pointer;
+        justify-content: right;
+        margin: 0;
     }
 
     a {
