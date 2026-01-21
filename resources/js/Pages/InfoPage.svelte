@@ -3,6 +3,7 @@
     import Layout from "../Components/Layout.svelte";
     import { convertSpaceToUnderscore } from "../helper";
     import { inertia, router } from "@inertiajs/svelte";
+    import GameSidebar from "../Components/GameSidebar.svelte";
 
     let { gameInfo, page, user, csrfToken, ...otherProps } = $props();
     let successTimeout, errorTimeout;
@@ -119,7 +120,7 @@
     }
 </script>
 
-<Layout {gameInfo} {user} {csrfToken} {...otherProps}>
+<Layout {gameInfo} {user} {csrfToken} {...otherProps} Sidebar={GameSidebar}>
     <div class="flex column align-items-center">
         {#if message}
             <div class="title-2" style="color: green; max-width: 600px;">{message}</div>

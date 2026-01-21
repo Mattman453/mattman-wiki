@@ -2,10 +2,9 @@
     import { inertia, router } from "@inertiajs/svelte";
     import { isMobile } from "../stores";
     import { scale, slide } from "svelte/transition";
-    import Dropdown from "./Dropdown.svelte";
     import { convertSpaceToUnderscore } from "../helper";
 
-    let { children, ...otherProps } = $props();
+    let { children, Sidebar, ...otherProps } = $props();
 
     let error = $state('');
     let openNavigator = $state(false);
@@ -52,9 +51,9 @@
 </svelte:head>
 
 <div class="header flex align-items-center justify-content-space-between">
-    {#if otherProps.gameInfo}
+    {#if Sidebar}
         <!-- svelte-ignore a11y_consider_explicit_label -->
-        <button onclick={() => {if (openNavigator) {transition = true; openNavigator = false;} else {transition = true; openNavigator = true;}}} style="all: unset; cursor: pointer; z-index: 9999;">
+        <button onclick={() => {transition = true; openNavigator = !openNavigator;}} style="all: unset; cursor: pointer; z-index: 9999;">
             {#if !openNavigator && transition == false}
                 <i class="fa-solid fa-bars" transition:scale={{duration: 150, opacity: 1}} onoutroend={() => transition = false}></i>
             {:else if openNavigator && transition == false}
@@ -92,22 +91,14 @@
         </div>
     {/if}
     {#if openNavigator}
-        <div class="menu" transition:slide={{axis: 'x'}}>
-            <div class="flex column" style="margin-top: 3em;">
-                {#each otherProps.gameInfo.sections as section (section.subtitle)}
-                    <Dropdown title={section.subtitle} link="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}">
-                        <div class="flex column" style="margin-left: 2em;">
-                            {#each section.sections as subSection}
-                                <a onclick={() => openNavigator = false} use:inertia href="/game/{convertSpaceToUnderscore(otherProps.gameInfo.game)}/{convertSpaceToUnderscore(section.subtitle)}/{convertSpaceToUnderscore(subSection)}">{subSection}</a>
-                            {/each}
-                        </div>
-                    </Dropdown>
-                {/each}
+        <div class="menu flex column" transition:slide={{axis: 'x'}}>
+            <div>
+                <Sidebar bind:openNavigator={openNavigator} {...otherProps} />
             </div>
         </div>
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div class="background" transition:slide={{axis: 'x'}} onclick={() => openNavigator = false}></div>
+        <div class="background" transition:slide={{axis: 'x'}} onclick={() => {transition = true; openNavigator = false}}></div>
     {/if}
 </div>
 
@@ -160,6 +151,7 @@
             height: 100vh;
             gap: 1em;
             box-sizing: border-box;
+            padding-top: 3em;
         }
 
         .background {
