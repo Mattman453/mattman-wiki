@@ -12,7 +12,8 @@ export default defineConfig({
         svelte(),
         compression({
             algorithms: [
-                defineAlgorithm('gzip', { level: 9 }),
+                defineAlgorithm('gz', { level: 9 }),
+                defineAlgorithm('br', { level: 11 }),
             ],
         }),
     ],
