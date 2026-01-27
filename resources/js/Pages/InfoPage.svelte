@@ -115,13 +115,25 @@
     function sectionHandler(e) {
         e.preventDefault();
         if (e.target.id.includes("add")) {
-            sections.push({
-                title: "",
-                body: {
-                    type: "text",
-                    data: "",
-                }
-            });
+            if (e.target.id.includes("between")) {
+                let index = parseInt(e.target.id.split("_")[3]);
+                sections.splice(index + 1, 0, {
+                    title: "",
+                    body: {
+                        type: "text",
+                        data: "",
+                    }
+                });
+            }
+            else {
+                sections.push({
+                    title: "",
+                    body: {
+                        type: "text",
+                        data: "",
+                    }
+                });
+            }
         }
         else {
             let index = parseInt(e.target.id.split("_")[1]);
@@ -165,10 +177,14 @@
                             </div>
                         {/if}
                     </div>
+                    <button id="add_section_between_{index}" name="add_section" type="button" onclick={sectionHandler}>
+                        <i class="fa-solid fa-plus"></i>
+                        Add Section After {index + 1}
+                    </button>
                 {/each}
                 <button id="add_section" name="add_section" type="button" onclick={sectionHandler}>
                     <i class="fa-solid fa-plus"></i>
-                    Add Section
+                    Add Section At End
                 </button>
             </div>
             <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
