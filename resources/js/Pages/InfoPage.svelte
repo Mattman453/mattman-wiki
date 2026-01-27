@@ -260,7 +260,7 @@
 </div>
 
 <style lang="scss">
-    @use "../../css/variables";
+    @import "../../css/variables";
 
     .title-1 {
         margin: 0.5em 1em;
@@ -303,7 +303,7 @@
         height: fit-content;
         resize: vertical;
 
-        @media screen and (max-width: variables.$mobileVW) {
+        @media screen and (max-width: $mobileVW) {
             width: 600px;
             max-width: 90vw;
         }

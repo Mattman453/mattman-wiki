@@ -234,7 +234,7 @@
 </div>
 
 <style lang="scss">
-    @use "../../css/variables";
+    @import "../../css/variables";
 
     .lifetime-notification-box {
         border: 2px solid blue;
@@ -252,7 +252,7 @@
     .children-container {
         margin: 1em 2em;
 
-        @media screen and (max-width: variables.$mobileVW) {
+        @media screen and (max-width: $mobileVW) {
             margin: 0.5em 1em;
         }
     }
@@ -271,7 +271,7 @@
         gap: 20px;
         padding: 0 2em;
 
-        @media screen and (max-width: variables.$mobileVW) {
+        @media screen and (max-width: $mobileVW) {
             height: 2.5em;
             padding: 0 1em;
             gap: 10px;
@@ -308,7 +308,7 @@
             max-width: 100px;
             max-height: 75px;
 
-            @media screen and (max-width: variables.$mobileVW) {
+            @media screen and (max-width: $mobileVW) {
                 height: 50px;
             }
         }

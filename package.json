@@ -19,7 +19,6 @@
         "@inertiajs/svelte": "^2.3.10",
         "@sveltejs/vite-plugin-svelte": "^6.2.4",
         "laravel-vite-plugin": "^2.0.1",
-        "svelte-preprocess": "^6.0.3",
         "vite": "^7.3.1",
         "vite-plugin-compression2": "^2.4.0"
     }

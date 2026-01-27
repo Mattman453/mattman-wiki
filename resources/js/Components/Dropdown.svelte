@@ -31,13 +31,13 @@
 {/if}
 
 <style lang="scss">
-    @use "../../css/variables";
+    @import "../../css/variables";
 
     .dropdown-header {
         padding: 0.5em 2em;
         align-items: stretch;
 
-        @media screen and (max-width: variables.$mobileVW) {
+        @media screen and (max-width: $mobileVW) {
             padding: 0.5em 1em;
         }
     }
