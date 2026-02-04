@@ -2,6 +2,7 @@
     import { onDestroy, onMount } from "svelte";
     import { convertSpaceToUnderscore } from "../helper";
     import { inertia, router } from "@inertiajs/svelte";
+    import showdown from "showdown";
 
     let {
         csrfToken,
@@ -15,6 +16,8 @@
     let error = $state('');
     let editing = $state(false);
     let sections = $state([]);
+
+    let converter = new showdown.Converter();
 
     onMount(() => {
         sections = page.sections;
@@ -214,8 +217,8 @@
                         {section.title}
                     </div>
                     {#if section.body.type == "text"}
-                        <div class="title-6">
-                            {section.body.data}
+                        <div class="title-6 flex column">
+                            {@html converter.makeHtml(section.body.data)}
                         </div>
                     {/if}
                 </div>
@@ -269,7 +272,11 @@
     .title-6 {
         margin: 0.5em 2em;
         font-size: 16px;
-        white-space: pre-line;
+        // white-space: pre-line;
+
+        :global(p) {
+            margin: 0.5em 0;
+        }
     }
 
     hr {
