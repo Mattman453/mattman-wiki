@@ -47,12 +47,12 @@
 </a>
 
 <style lang="scss">
-    @import "../../css/variables";
+    @use "../../css/variables";
 
     .text-block {
         margin: 2em;
 
-        @media screen and (max-width: $mobileVW) {
+        @media screen and (max-width: variables.$mobileVW) {
             flex-direction: column;
             margin: 1em;
         }
