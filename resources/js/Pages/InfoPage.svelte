@@ -189,10 +189,6 @@
                         Add Section After {index + 1}
                     </button>
                 {/each}
-                <button id="add_section" name="add_section" type="button" onclick={sectionHandler}>
-                    <i class="fa-solid fa-plus"></i>
-                    Add Section At End
-                </button>
             </div>
             <button type="submit" style="all: unset; cursor: pointer; font-weight: bold;">
                 Save
