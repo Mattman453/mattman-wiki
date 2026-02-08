@@ -16,14 +16,11 @@
     let error = $state('');
     let editing = $state(false);
     let sections = $state([]);
-
-    let prepped = $state(false);
     let converter = $state();
 
     onMount(() => {
         showdown.setFlavor('github');
         converter = new showdown.Converter();
-        prepped = true;
         sections = page.sections;
     });
 
@@ -218,10 +215,10 @@
                     </div>
                     {#if section.body.type == "text"}
                         <div class="title-6 flex column">
-                            {#if prepped}
+                            {#if converter}
                                 {@html converter.makeHtml(section.body.data)}
                             {:else}
-                                {section.body.data}
+                                {@html section.body.data}
                             {/if}
                         </div>
                     {/if}
