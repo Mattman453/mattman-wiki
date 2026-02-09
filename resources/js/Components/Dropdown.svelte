@@ -31,7 +31,7 @@
 {/if}
 
 <style lang="scss">
-    @use "../../css/variables";
+    @use "../../scss/variables";
 
     .dropdown-header {
         padding: 0.5em 2em;

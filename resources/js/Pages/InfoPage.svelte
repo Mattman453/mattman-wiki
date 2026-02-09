@@ -228,8 +228,8 @@
         </div>
         <hr>
         <div class="flex column" style="max-width: 1200px;">
-            {#each page.sections as section}
-                {#if section.title != page.sections[0].title}
+            {#each sections as section}
+                {#if section.title != sections[0].title}
                     <hr>
                 {/if}
                 <div class="flex column">
@@ -283,7 +283,7 @@
 </div>
 
 <style lang="scss">
-    @use "../../css/variables";
+    @use "../../scss/variables";
 
     .title-1 {
         margin: 0.5em 1em;
@@ -292,7 +292,6 @@
     .title-6 {
         margin: 0.5em 2em;
         font-size: 16px;
-        // white-space: pre-line;
     }
 
     .markdown {

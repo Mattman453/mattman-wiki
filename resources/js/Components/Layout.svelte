@@ -234,7 +234,7 @@
 </div>
 
 <style lang="scss">
-    @use "../../css/variables";
+    @use "../../scss/variables";
 
     .lifetime-notification-box {
         border: 2px solid blue;

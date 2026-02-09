@@ -1,5 +1,5 @@
 import { derived, readable } from "svelte/store";
-import { mobileVW } from "../css/_export.module.scss";
+import { mobileVW } from "../scss/_export.module.scss";
 
 export const windowInnerWidth = readable(window.innerWidth, (set) => {
     const handleResize = () => { set(window.innerWidth); };

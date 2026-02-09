@@ -47,7 +47,7 @@
 </a>
 
 <style lang="scss">
-    @use "../../css/variables";
+    @use "../../scss/variables";
 
     .text-block {
         margin: 2em;

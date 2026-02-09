@@ -6,7 +6,7 @@ import { compression, defineAlgorithm } from 'vite-plugin-compression2';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.scss', 'resources/js/app.js'],
+            input: ['resources/scss/app.scss', 'resources/js/app.js'],
             refresh: true,
         }),
         svelte(),
