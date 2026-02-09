@@ -1,6 +1,6 @@
 <script>
     import { onDestroy, onMount } from "svelte";
-    import { convertSpaceToUnderscore } from "../helper";
+    import { convertSpaceToUnderscore } from "../../js/helper";
     import { inertia, router } from "@inertiajs/svelte";
     import showdown from "showdown";
     import DOMPurify from "dompurify";

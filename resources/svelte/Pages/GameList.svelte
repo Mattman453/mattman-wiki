@@ -1,6 +1,6 @@
 <script>
     import { inertia } from "@inertiajs/svelte";
-    import { convertSpaceToUnderscore } from "../helper";
+    import { convertSpaceToUnderscore } from "../../js/helper";
 
     let { games } = $props();
 

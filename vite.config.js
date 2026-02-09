@@ -19,6 +19,7 @@ export default defineConfig({
     ],
     build: {
         minify: 'terser',
+        reportCompressedSize: false,
     },
     server: {
         host: '127.0.0.1',

@@ -1,7 +1,7 @@
 <script>
     import { inertia, router } from "@inertiajs/svelte";
-    import { convertSpaceToUnderscore } from "../helper";
-    import { isMobile, windowInnerWidth } from "../stores";
+    import { convertSpaceToUnderscore } from "../../js/helper";
+    import { isMobile, windowInnerWidth } from "../../js/stores";
     import { onDestroy } from "svelte";
     import { fade, scale, slide } from "svelte/transition";
     import GameSidebar from "./GameSidebar.svelte";

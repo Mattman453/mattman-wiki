@@ -1,7 +1,7 @@
 <script>
     import { inertia, router } from "@inertiajs/svelte";
-    import Dropdown from "../Components/Dropdown.svelte";
-    import { convertSpaceToUnderscore } from "../helper";
+    import Dropdown from "./Dropdown.svelte";
+    import { convertSpaceToUnderscore } from "../../js/helper";
     import { onDestroy, onMount } from "svelte";
 
     let { 
