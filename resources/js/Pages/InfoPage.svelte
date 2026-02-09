@@ -3,6 +3,9 @@
     import { convertSpaceToUnderscore } from "../helper";
     import { inertia, router } from "@inertiajs/svelte";
     import showdown from "showdown";
+    import DOMPurify from "dompurify";
+    import TurndownService from "turndown";
+    import { gfm } from "turndown-plugin-gfm";
 
     let {
         csrfToken,
@@ -16,11 +19,8 @@
     let error = $state('');
     let editing = $state(false);
     let sections = $state([]);
-    let converter = $state();
 
     onMount(() => {
-        showdown.setFlavor('github');
-        converter = new showdown.Converter();
         sections = page.sections;
     });
 
@@ -55,7 +55,22 @@
         newSections.forEach((section, index) => {
             formData.append("sections[" + index + "][title]", section.title);
             formData.append("sections[" + index + "][body][type]", "text");
-            formData.append("sections[" + index + "][body][data]", section.body.data);
+            let html = convertMarkdownToHTML(section.body.data);
+            let turndownService = new TurndownService({
+                headingStyle: 'atx',
+                codeBlockStyle: 'fenced',
+                bulletListMarker: '-',
+            });
+            turndownService.use(gfm);
+            try {
+                const markdown = turndownService.turndown(html);
+                formData.append("sections[" + index + "][body][data]", markdown);
+            }
+            catch (exception) {
+                console.error(exception);
+                error = "Unable to save due to failed markdown parse.";
+                return;
+            }
         });
 
         let fetchString = "/game/edit/" + convertSpaceToUnderscore(page.game);
@@ -144,6 +159,14 @@
             sections.splice(index, 1);
         }
     }
+
+    function convertMarkdownToHTML(markdown) {
+        let converter = new showdown.Converter();
+        converter.setFlavor('github');
+        let dirtyHTML = converter.makeHtml(markdown);
+        let html = DOMPurify.sanitize(dirtyHTML);
+        return html;
+    }
 </script>
 
 <div class="flex column align-items-center">
@@ -214,12 +237,8 @@
                         {section.title}
                     </div>
                     {#if section.body.type == "text"}
-                        <div class="title-6 flex column">
-                            {#if converter}
-                                {@html converter.makeHtml(section.body.data)}
-                            {:else}
-                                {@html section.body.data}
-                            {/if}
+                        <div class="title-6 markdown flex column">
+                            {@html convertMarkdownToHTML(section.body.data)}
                         </div>
                     {/if}
                 </div>
@@ -274,9 +293,26 @@
         margin: 0.5em 2em;
         font-size: 16px;
         // white-space: pre-line;
+    }
 
+    .markdown {
         :global(p) {
             margin: 0.5em 0;
+        }
+
+        :global(table) {
+            border: 1px solid black;
+            border-collapse: collapse;
+            width: max-content;
+        }
+
+        :global(th) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        :global(th), :global(td), :global(tr) {
+            padding: 0.1em 0.3em;
+            border: 1px solid black;
         }
     }
 
