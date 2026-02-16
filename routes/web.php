@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health-check', function() {
+    return response()->json([
+        'message' => 'OK',
+    ], 200);
+});
+
 Route::middleware(['throttle:global'])->group(function () {
     // Static Pages
     Route::get('/', 'App\Http\Controllers\MainController@homeView')->name('game.home');
