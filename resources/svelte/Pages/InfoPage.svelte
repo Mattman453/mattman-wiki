@@ -4,8 +4,6 @@
     import { inertia, router } from "@inertiajs/svelte";
     import showdown from "showdown";
     import DOMPurify from "dompurify";
-    import TurndownService from "turndown";
-    import { gfm } from "turndown-plugin-gfm";
 
     let {
         csrfToken,
@@ -22,6 +20,14 @@
 
     onMount(() => {
         sections = page.sections;
+        DOMPurify.addHook('afterSanitizeElements', (currentNode) => {
+            if (currentNode.tagName === 'IFRAME') {
+                const src = currentNode.getAttribute('src') || '';
+                if (!src.startsWith('https://www.youtube.com/embed/')) {
+                    return currentNode.parentNode?.removeChild(currentNode);
+                }
+            }
+        });
     });
 
     onDestroy(() => {
@@ -56,14 +62,10 @@
             formData.append("sections[" + index + "][title]", section.title);
             formData.append("sections[" + index + "][body][type]", "text");
             let html = convertMarkdownToHTML(section.body.data);
-            let turndownService = new TurndownService({
-                headingStyle: 'atx',
-                codeBlockStyle: 'fenced',
-                bulletListMarker: '-',
-            });
-            turndownService.use(gfm);
             try {
-                const markdown = turndownService.turndown(html);
+                let converter = new showdown.Converter();
+                converter.setFlavor('github');
+                const markdown = converter.makeMarkdown(html);
                 formData.append("sections[" + index + "][body][data]", markdown);
             }
             catch (exception) {
@@ -164,7 +166,7 @@
         let converter = new showdown.Converter();
         converter.setFlavor('github');
         let dirtyHTML = converter.makeHtml(markdown);
-        let html = DOMPurify.sanitize(dirtyHTML);
+        let html = DOMPurify.sanitize(dirtyHTML, {ADD_TAGS: ['iframe'], ADD_ATTR: ['src', 'allow', 'allowfullscreen', 'frameborder', 'width', 'height']});
         return html;
     }
 </script>
