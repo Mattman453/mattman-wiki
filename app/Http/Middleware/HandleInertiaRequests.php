@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,7 +39,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'user' => auth()->user()?->only('email', 'roles'),
+            'user' => Auth::user()?->only('email', 'roles'),
             'csrfToken' => csrf_token(),
             'lifetime' => Carbon::now()->addMinutes(config('session.lifetime'))->toDateTimeString('millisecond'),
         ];

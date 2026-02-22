@@ -43,6 +43,13 @@ return [
             'after_commit' => false,
         ],
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'connection' => 'mongodb',
+            'table' => 'jobs',
+            'queue' => 'default',
+        ],
+
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),
@@ -86,6 +93,7 @@ return [
     */
 
     'batching' => [
+        'driver' => env('QUEUE_BATCHING_DRIVER', 'database'),
         'database' => env('DB_CONNECTION', 'sqlite'),
         'table' => 'job_batches',
     ],
