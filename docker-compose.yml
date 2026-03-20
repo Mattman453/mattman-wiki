@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      args:
+        user: mc4545
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: mattman-wiki
+    container_name: mattman-wiki-app
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www
+    ports:
+      - 5173:5173
+    volumes:
+      - ./:/var/www
+      - ./docker/app/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - mattman-wiki
+
+  nginx:
+    image: nginx:alpine
+    container_name: mattman-wiki-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 8000:80
+      - 80:80
+      - 443:443
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/:/etc/nginx/conf.d/
+    networks:
+      - mattman-wiki
+
+networks:
+  mattman-wiki:
+    driver: bridge
