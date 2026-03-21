@@ -6,7 +6,7 @@ services:
         uid: 1000
       context: ./docker/app
       dockerfile: Dockerfile
-    image: mattman-wiki
+    image: mattman-wiki-app
     container_name: mattman-wiki-app
     restart: unless-stopped
     tty: true
@@ -20,7 +20,10 @@ services:
       - mattman-wiki
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    image: mattman-wiki-nginx
     container_name: mattman-wiki-nginx
     restart: unless-stopped
     tty: true
@@ -30,7 +33,8 @@ services:
       - 443:443
     volumes:
       - ./:/var/www
-      - ./docker/nginx/:/etc/nginx/conf.d/
+      - ./docker/nginx/config:/etc/nginx/conf.d/
+      - ./docker/nginx/ssl:/etc/letsencrypt/
     networks:
       - mattman-wiki
 
