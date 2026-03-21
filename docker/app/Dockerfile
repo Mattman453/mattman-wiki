@@ -1,4 +1,4 @@
-FROM php:8.5-fpm
+FROM php:8.5-fpm-alpine
 
 ARG user
 ARG uid
@@ -10,14 +10,18 @@ WORKDIR /var/www
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install system dependencies
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apk update && apk add --no-cache \
+    autoconf \
     curl \
+    clang \
     git \
     gpg \
-    libonig-dev \
     libpng-dev \
     libxml2-dev \
+    make \
     npm \ 
+    oniguruma-dev \
+    openssl-dev \
     sudo \
     unixodbc-dev \
     unzip \
@@ -31,9 +35,6 @@ RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin
     export DEBIAN_FRONTEND="noninteractive"; \
     set -eux; \
     pie install --no-cache mongodb/mongodb-extension;
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
