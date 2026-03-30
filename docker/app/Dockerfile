@@ -34,7 +34,7 @@ RUN npm install --global yarn
 RUN --mount=type=bind,from=ghcr.io/php/pie:bin,source=/pie,target=/usr/local/bin/pie \
     export DEBIAN_FRONTEND="noninteractive"; \
     set -eux; \
-    pie install --no-cache mongodb/mongodb-extension;
+    pie install --no-cache mongodb/mongodb-extension -vvv;
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
