@@ -18,7 +18,7 @@ class SetScheme
     public function handle(Request $request, Closure $next): Response
     {
         try {
-            if ($request->isSecure()) URL::forceScheme('https');
+            if (config('app.env') === 'production' || $request->isSecure()) URL::forceScheme('https');
             else URL::forceScheme('http');
         } catch (\Exception $e) {
             Log::error('SetScheme error: ' . $e->getMessage());
