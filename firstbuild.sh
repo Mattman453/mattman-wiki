@@ -1,4 +1,3 @@
-git pull --rebase
 docker compose build
 docker compose up -d
 docker compose exec app composer install --optimize-autoloader --no-dev
